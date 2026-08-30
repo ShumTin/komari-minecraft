@@ -20,9 +20,9 @@ function refresh() { nodes.value = nodes.value.map((node) => ({ ...node, up: Mat
     <main>
       <section class="overview-grid">
         <div class="overview-card"><div class="overview-label">在线节点 <i>ⓘ</i></div><div class="overview-value">18<small>/ 22</small></div><p class="overview-status"><b/>在线率 81.82%</p><span class="overview-icon">▦</span></div>
-        <div class="overview-card"><div class="overview-label">剩余节点 <i>ⓘ</i></div><div class="overview-value">¥128.00</div><p>本月预计 ¥32.00</p><span class="overview-icon">▱</span></div>
+        <div class="overview-card"><div class="overview-label">资产概览 <i>ⓘ</i></div><div class="overview-value">¥270.12</div><p>实时汇率计算 <em>入门</em></p><span class="overview-icon">◎</span></div>
         <div class="overview-card"><div class="overview-label">今日流量 <i>ⓘ</i></div><div class="overview-value">86.4<small>GB</small></div><p>总流量 1.007 TB</p><span class="overview-icon">▣</span></div>
-        <div class="overview-card"><div class="overview-label">实时速率 <i>ⓘ</i></div><div class="rate-values"><div>↑ <b>12.8</b><small>Mbps</small></div><div>↓ <b>38.6</b><small>Mbps</small></div></div><span class="overview-icon">◉</span></div>
+        <div class="overview-card"><div class="overview-label">实时带宽 <i>ⓘ</i></div><div class="overview-value orange-text">1.08<small>MB/s</small></div><p>↑ 555 KB/s · ↓ 549 KB/s <em>轻量</em></p><span class="overview-icon">◉</span></div>
       </section>
       <div class="sort-row"><button @click="refresh">☷ 默认</button></div>
       <section class="group-bar"><button v-for="group in groups" :key="group.code"><span>{{ group.flag }}</span>{{ group.code }} <i>{{ group.count }}</i></button></section>
