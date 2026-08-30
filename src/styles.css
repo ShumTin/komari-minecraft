@@ -783,8 +783,6 @@ body { background: #f4f4f5; color: #18181b; }
 .overview-card > b { display: block; margin-top: 13px; font-size: 28px; line-height: 1; letter-spacing: -.7px; }
 .overview-card > b small { margin-left: 4px; color: #727680; font-size: 12px; font-weight: 600; letter-spacing: 0; }
 .overview-card p { margin: 8px 0 0; color: #62666f; font-size: 11px; }
-.overview-card p em { float: right; color: #4d7ddd; font-style: normal; font-weight: 600; }
-.overview-card p .green-text, .green-text { color: #3f9b70; }
 .orange-text { color: #d8782b; }
 .overview-line { height: 6px; margin-top: 16px; border-radius: 10px; background: #69b489; }
 .sort-row { height: 71px; display: flex; align-items: center; justify-content: flex-end; }
@@ -814,6 +812,3 @@ body { background: #f4f4f5; color: #18181b; }
 .overview-card .overview-status { display: flex; align-items: center; gap: 7px; color: #626872; }
 .overview-status b { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
 .overview-card .overview-icon { position: absolute; top: 36px; right: 22px; display: grid; width: 27px; height: 27px; place-items: center; color: #18181b; font-size: 27px; }
-.rate-values { margin-top: 8px; display: grid; gap: 3px; color: #18181b; font-size: 13px; line-height: 1.05; }
-.rate-values div:first-child { color: #18181b; }.rate-values div:first-child::first-letter { color: #111; }.rate-values div:nth-child(2) { color: #18181b; }
-.rate-values b { margin-left: 3px; font-size: 20px; font-weight: 600; }.rate-values small { margin-left: 4px; color: #525760; font-size: 10px; }
