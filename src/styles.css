@@ -804,3 +804,16 @@ body { background: #f4f4f5; color: #18181b; }
 .node-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding-top: 13px; color: #676c75; font-size: 11px; }.node-footer b { color: #4d83e6; font-size: 16px; }.node-footer .expire { color: #45ad6e; }.price { width: fit-content; margin-top: 11px; padding: 5px 10px; border: 1px solid #bde3ce; border-radius: 8px; background: #edf8f1; color: #3d9d69; font-size: 11px; font-weight: 700; }
 .translate { position: fixed; right: 12px; bottom: 258px; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #e58aaa; color: #fff; font-size: 16px; box-shadow: 0 2px 8px #0002; }
 @media (max-width: 800px) { .monitor-app { padding: 0 16px 30px; }.overview-grid { grid-template-columns: 1fr 1fr; }.toolbar { gap: 4px; }.toolbar button { width: 31px; height: 31px; }.node-grid { grid-template-columns: 1fr; }.node-card { min-width: 0; } }
+
+.overview-card { position: relative; min-height: 104px; padding: 16px 19px; }
+.overview-label { color: #50545c; font-size: 12px; font-weight: 600; }
+.overview-label i { margin-left: 5px; color: #4b5eaa; font-size: 11px; font-style: normal; }
+.overview-value { margin-top: 12px; color: #18181b; font-size: 22px; font-weight: 600; letter-spacing: -.4px; }
+.overview-value small { margin-left: 5px; color: #6b7079; font-size: 12px; font-weight: 500; letter-spacing: 0; }
+.overview-card p { margin-top: 8px; color: #656a73; font-size: 11px; }
+.overview-card .overview-status { display: flex; align-items: center; gap: 7px; color: #626872; }
+.overview-status b { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
+.overview-card .overview-icon { position: absolute; top: 36px; right: 22px; display: grid; width: 27px; height: 27px; place-items: center; color: #18181b; font-size: 27px; }
+.rate-values { margin-top: 8px; display: grid; gap: 3px; color: #18181b; font-size: 13px; line-height: 1.05; }
+.rate-values div:first-child { color: #18181b; }.rate-values div:first-child::first-letter { color: #111; }.rate-values div:nth-child(2) { color: #18181b; }
+.rate-values b { margin-left: 3px; font-size: 20px; font-weight: 600; }.rate-values small { margin-left: 4px; color: #525760; font-size: 10px; }

@@ -19,10 +19,10 @@ function refresh() { nodes.value = nodes.value.map((node) => ({ ...node, up: Mat
     <header class="header"><h1>Shum</h1><div class="toolbar"><button title="浅色主题">☼</button><button title="显示器">▣</button><button title="深色主题">☾</button><button title="农场主题">♧</button><button title="列表">▤</button><button title="配色">◉</button><button title="筛选">☷</button><button title="设置">⚙</button><button title="展开">›</button></div></header>
     <main>
       <section class="overview-grid">
-        <div class="overview-card"><span>在线节点</span><b>2<small>/ 2</small></b><div class="overview-line green-line"/></div>
-        <div class="overview-card"><span>实时带宽 <i>≡</i></span><b class="orange-text">1.08<small>MB/s</small></b><p>↑ 555 KB/s · ↓ 549 KB/s <em>轻量</em></p></div>
-        <div class="overview-card"><span>累计流量 <i>▥</i></span><b>29.4<small>GB</small></b><p>↑ 20.6 GB · ↓ 8.83 GB <em class="green-text">轻量</em></p></div>
-        <div class="overview-card"><span>资产概览 <i>◎</i></span><b>￥270.12</b><p>实时汇率计算 <em class="green-text">入门</em></p></div>
+        <div class="overview-card"><div class="overview-label">在线节点 <i>ⓘ</i></div><div class="overview-value">18<small>/ 22</small></div><p class="overview-status"><b/>在线率 81.82%</p><span class="overview-icon">▦</span></div>
+        <div class="overview-card"><div class="overview-label">剩余节点 <i>ⓘ</i></div><div class="overview-value">¥128.00</div><p>本月预计 ¥32.00</p><span class="overview-icon">▱</span></div>
+        <div class="overview-card"><div class="overview-label">今日流量 <i>ⓘ</i></div><div class="overview-value">86.4<small>GB</small></div><p>总流量 1.007 TB</p><span class="overview-icon">▣</span></div>
+        <div class="overview-card"><div class="overview-label">实时速率 <i>ⓘ</i></div><div class="rate-values"><div>↑ <b>12.8</b><small>Mbps</small></div><div>↓ <b>38.6</b><small>Mbps</small></div></div><span class="overview-icon">◉</span></div>
       </section>
       <div class="sort-row"><button @click="refresh">☷ 默认</button></div>
       <section class="group-bar"><button v-for="group in groups" :key="group.code"><span>{{ group.flag }}</span>{{ group.code }} <i>{{ group.count }}</i></button></section>
