@@ -10,21 +10,20 @@ const nodes = ref([
   { name: "Tokyo - AWS Lightsail", flag: "🇯🇵", cpu: "0.40", memory: "42.26", memoryText: "187 MB / 442 MB", disk: "6.6", diskText: "1.28 GB / 19.6 GB", up: "555", down: "549", upUnit: "KB/s", downUnit: "KB/s", out: "4.25 GB", in: "4.21 GB", online: "9 天", expires: "20 天", accent: "orange" },
 ]);
 const query = ref("");
+const isDark = ref(false);
 const filteredNodes = computed(() => nodes.value.filter((node) => node.name.toLowerCase().includes(query.value.toLowerCase())));
-function refresh() { nodes.value = nodes.value.map((node) => ({ ...node, up: Math.max(80, Number(node.up) + Math.round(Math.random() * 100 - 50)).toString(), down: Math.max(80, Number(node.down) + Math.round(Math.random() * 100 - 50)).toString() })); }
 </script>
 
 <template>
-  <div class="monitor-app">
-    <header class="header"><h1>Shum</h1><div class="toolbar"><button title="浅色主题">☼</button><button title="显示器">▣</button><button title="深色主题">☾</button><button title="农场主题">♧</button><button title="列表">▤</button><button title="配色">◉</button><button title="筛选">☷</button><button title="设置">⚙</button><button title="展开">›</button></div></header>
+  <div class="monitor-app" :class="{ 'is-dark': isDark }">
+    <header class="header"><h1>Shum</h1><div class="toolbar"><button :title="isDark ? '切换为浅色' : '切换为深色'" :aria-label="isDark ? '切换为浅色' : '切换为深色'" @click="isDark = !isDark">{{ isDark ? '☼' : '☾' }}</button><button title="设置" aria-label="设置">⚙</button></div></header>
     <main>
       <section class="overview-grid">
         <div class="overview-card"><div class="overview-label">在线节点 <i>ⓘ</i></div><div class="overview-value">18<small>/ 22</small></div><p class="overview-status"><b/>在线率 81.82%</p><span class="overview-icon">▦</span></div>
         <div class="overview-card"><div class="overview-label">资产概览 <i>ⓘ</i></div><div class="overview-value">¥270.12</div><p>实时汇率计算</p><span class="overview-icon">◎</span></div>
-        <div class="overview-card"><div class="overview-label">今日流量 <i>ⓘ</i></div><div class="overview-value">86.4<small>GB</small></div><p>总流量 1.007 TB</p><span class="overview-icon">▣</span></div>
+        <div class="overview-card"><div class="overview-label">今日流量 <i>ⓘ</i></div><div class="overview-value">86.4<small>GB</small></div><p>总流量 1.007 TB</p><span class="overview-icon">▥</span></div>
         <div class="overview-card"><div class="overview-label">实时带宽 <i>ⓘ</i></div><div class="overview-value orange-text">1.08<small>MB/s</small></div><p>↑ 555 KB/s · ↓ 549 KB/s</p><span class="overview-icon">◉</span></div>
       </section>
-      <div class="sort-row"><button @click="refresh">☷ 默认</button></div>
       <section class="group-bar"><button v-for="group in groups" :key="group.code"><span>{{ group.flag }}</span>{{ group.code }} <i>{{ group.count }}</i></button></section>
       <section class="node-grid">
         <article v-for="node in filteredNodes" :key="node.name" class="node-card">

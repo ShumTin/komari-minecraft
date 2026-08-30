@@ -774,8 +774,8 @@ body { background: #f4f4f5; color: #18181b; }
 .header { height: 49px; display: flex; align-items: center; justify-content: space-between; }
 .header h1 { margin: 0; font-size: 21px; font-weight: 750; letter-spacing: -.6px; }
 .toolbar { display: flex; align-items: center; gap: 8px; }
-.toolbar button, .sort-row button { width: 35px; height: 35px; border: 1px solid #e4e4e7; border-radius: 50%; background: #fff; color: #5f636b; font: 16px inherit; cursor: pointer; box-shadow: 0 1px 2px #00000005; }
-.toolbar button:hover, .sort-row button:hover { color: #18181b; border-color: #c9cbd0; }
+.toolbar button { width: 35px; height: 35px; border: 1px solid #e4e4e7; border-radius: 50%; background: #fff; color: #5f636b; font: 16px inherit; cursor: pointer; box-shadow: 0 1px 2px #00000005; }
+.toolbar button:hover { color: #18181b; border-color: #c9cbd0; }
 .overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .overview-card { min-height: 115px; border: 1px solid #e6e6e8; border-radius: 16px; padding: 17px 16px 13px; background: #fff; box-shadow: 0 2px 10px #00000003; }
 .overview-card > span { display: flex; justify-content: space-between; color: #686b72; font-size: 11px; font-weight: 600; }
@@ -785,9 +785,7 @@ body { background: #f4f4f5; color: #18181b; }
 .overview-card p { margin: 8px 0 0; color: #62666f; font-size: 11px; }
 .orange-text { color: #d8782b; }
 .overview-line { height: 6px; margin-top: 16px; border-radius: 10px; background: #69b489; }
-.sort-row { height: 71px; display: flex; align-items: center; justify-content: flex-end; }
-.sort-row button { width: auto; padding: 0 13px; border-radius: 18px; font-size: 11px; }
-.group-bar { height: 53px; display: flex; align-items: center; gap: 6px; padding: 0 25px; border: 1px solid #e8e8ea; border-radius: 16px; background: #fff; }
+.group-bar { height: 53px; display: flex; align-items: center; gap: 6px; margin-top: 18px; padding: 0 25px; border: 1px solid #e8e8ea; border-radius: 16px; background: #fff; }
 .group-bar button { border: 0; background: transparent; color: #545861; font: 600 12px inherit; cursor: pointer; padding: 5px 8px; }
 .group-bar button span { margin-right: 8px; font-size: 13px; }.group-bar button i { margin-left: 5px; padding: 3px 6px; border-radius: 7px; background: #f5f5f6; color: #8b8e95; font-style: normal; font-size: 10px; }
 .node-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 414px)); gap: 20px; padding-top: 18px; }
@@ -812,3 +810,38 @@ body { background: #f4f4f5; color: #18181b; }
 .overview-card .overview-status { display: flex; align-items: center; gap: 7px; color: #626872; }
 .overview-status b { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }
 .overview-card .overview-icon { position: absolute; top: 36px; right: 22px; display: grid; width: 27px; height: 27px; place-items: center; color: #18181b; font-size: 27px; }
+
+.monitor-app.is-dark { background: #212830; color: #d1d7e0; }
+.monitor-app.is-dark .header h1 { color: #e4e8ee; }
+.monitor-app.is-dark .toolbar button { border-color: #3d444d; background: #262c36; color: #b7bdc8; }
+.monitor-app.is-dark .toolbar button:hover { border-color: #656c76; background: #2f3742; color: #fff; }
+.monitor-app.is-dark .overview-card,
+.monitor-app.is-dark .group-bar,
+.monitor-app.is-dark .node-card { border-color: #3d444d; background: #262c36; box-shadow: none; }
+.monitor-app.is-dark .overview-label,
+.monitor-app.is-dark .overview-card p,
+.monitor-app.is-dark .metric-label,
+.monitor-app.is-dark .io-grid span,
+.monitor-app.is-dark .quota,
+.monitor-app.is-dark .latency-grid div,
+.monitor-app.is-dark .node-footer { color: #b7bdc8; }
+.monitor-app.is-dark .overview-value,
+.monitor-app.is-dark .overview-card .overview-icon,
+.monitor-app.is-dark .node-title h2,
+.monitor-app.is-dark .metric-label b { color: #d1d7e0; }
+.monitor-app.is-dark .overview-value small,
+.monitor-app.is-dark .metric small,
+.monitor-app.is-dark .io-grid b,
+.monitor-app.is-dark .quota > span:last-of-type,
+.monitor-app.is-dark .latency-grid div b,
+.monitor-app.is-dark .latency-grid small { color: #9198a1; }
+.monitor-app.is-dark .group-bar button { color: #d1d7e0; }
+.monitor-app.is-dark .group-bar button i { background: #343b45; color: #b7bdc8; }
+.monitor-app.is-dark .node-actions button { color: #9198a1; }
+.monitor-app.is-dark .traffic-grid,
+.monitor-app.is-dark .io-grid,
+.monitor-app.is-dark .quota,
+.monitor-app.is-dark .latency-grid { border-color: #3d444d; }
+.monitor-app.is-dark .metric > i,
+.monitor-app.is-dark .traffic > i,
+.monitor-app.is-dark .quota > i { background: repeating-linear-gradient(90deg,#343b45 0 8px,transparent 8px 11px); }
