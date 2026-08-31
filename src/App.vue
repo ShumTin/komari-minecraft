@@ -13,6 +13,7 @@ import {
 } from "./mock/mockService.js";
 
 const isDark = ref(false);
+const siteIcon = ref("◉");
 const activeGroup = ref("all");
 const selectedNode = ref(null);
 const overview = getOverview();
@@ -57,7 +58,10 @@ function selectGroup(group) {
 <template>
   <div class="monitor-app" :class="{ 'is-dark': isDark }">
     <header class="header">
-      <h1>Shum</h1>
+      <div class="site-brand">
+        <span class="site-icon" aria-hidden="true">{{ siteIcon }}</span>
+        <h1>Shum</h1>
+      </div>
       <Toolbar :is-dark="isDark" @toggle-theme="isDark = !isDark" />
     </header>
     <main v-if="!selectedNode">
@@ -82,7 +86,9 @@ function selectGroup(group) {
     <NodeDetails
       v-if="selectedNode"
       :node="selectedNode"
+      :hosts="nodes"
       @close="closeDetails"
+      @select-host="openNode(nodes.find((node) => node.name === $event))"
     />
   </div>
 </template>

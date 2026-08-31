@@ -72,10 +72,15 @@ body {
 }
 
 .header {
-  height: 49px;
+  height: 58px;
+  margin: 0 -4.1vw;
+  padding: 0 4.1vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid #e4e7eb;
+  background: #fff;
+  box-shadow: 0 2px 12px #24334a0a;
 }
 
 .header h1 {
@@ -84,6 +89,10 @@ body {
   font-weight: 750;
   letter-spacing: -0.6px;
 }
+
+.site-brand { display: flex; align-items: center; gap: 9px; }
+.site-icon { display: grid; width: 29px; height: 29px; place-items: center; border: 1px solid #c9d5ee; border-radius: 9px; background: #edf2ff; color: #5576c8; font-size: 16px; }
+
 
 .toolbar {
   display: flex;

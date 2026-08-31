@@ -2,9 +2,18 @@
   background: #212830;
   color: #d1d7e0;
 }
+.monitor-app.is-dark .header {
+  border-color: #343b46;
+  background: #262c36;
+}
 
 .monitor-app.is-dark .header h1 {
   color: #e4e8ee;
+}
+.monitor-app.is-dark .site-icon {
+  border-color: #455575;
+  background: #303b58;
+  color: #b6c8ff;
 }
 
 .monitor-app.is-dark .toolbar button {
