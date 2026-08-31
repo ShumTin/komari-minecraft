@@ -4,9 +4,11 @@ defineEmits(["close"]);
 </script>
 
 <template>
-  <div class="details-backdrop" @click.self="$emit('close')">
-    <aside class="details-panel">
-      <button class="details-close" @click="$emit('close')">×</button>
+  <main class="details-page">
+    <div class="details-page-header">
+      <button class="details-back" @click="$emit('close')">← 返回节点列表</button>
+    </div>
+    <section class="details-panel">
       <div class="details-title">
         <span>{{ node.flag }}</span>
         <div>
@@ -55,6 +57,6 @@ defineEmits(["close"]);
           <span>下行速率</span><b>{{ node.down }} {{ node.downUnit }}</b>
         </div>
       </section>
-    </aside>
-  </div>
+    </section>
+  </main>
 </template>

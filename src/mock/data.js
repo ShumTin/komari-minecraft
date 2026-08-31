@@ -1,7 +1,13 @@
 export const overview = {
   online: { current: 18, total: 22, rate: "81.82%" },
   assets: { value: "¥270.12", forecast: "本月预计 ¥32.00" },
-  traffic: { today: "86.4", unit: "GB", total: "总流量 1.007 TB" },
+  traffic: {
+    today: "86.4",
+    unit: "GB",
+    total: "总流量 1.007 TB",
+    upload: "34.00 GB",
+    download: "19.12 GB",
+  },
   bandwidth: {
     value: "1.08",
     unit: "MB/s",

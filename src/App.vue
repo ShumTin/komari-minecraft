@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import Toolbar from "./components/Toolbar.vue";
 import OverviewCards from "./components/OverviewCards.vue";
 import GroupFilter from "./components/GroupFilter.vue";
@@ -19,6 +19,34 @@ const overview = getOverview();
 const groups = getGroups();
 const nodes = getNodes();
 const filteredNodes = ref(nodes);
+
+function findNodeFromLocation() {
+  const match = window.location.pathname.match(/^\/nodes\/(.+)$/);
+  if (!match) return null;
+  const node = nodes.find((item) => encodeURIComponent(item.name) === match[1]);
+  return node ? getNodeDetails(node) : null;
+}
+
+function syncRoute() {
+  selectedNode.value = findNodeFromLocation();
+}
+
+function openNode(node) {
+  window.history.pushState({}, "", `/nodes/${encodeURIComponent(node.name)}`);
+  selectedNode.value = getNodeDetails(node);
+}
+
+function closeDetails() {
+  window.history.pushState({}, "", "/");
+  selectedNode.value = null;
+}
+
+onMounted(() => {
+  syncRoute();
+  window.addEventListener("popstate", syncRoute);
+});
+onBeforeUnmount(() => window.removeEventListener("popstate", syncRoute));
+
 function selectGroup(group) {
   activeGroup.value = group;
   filteredNodes.value =
@@ -32,7 +60,7 @@ function selectGroup(group) {
       <h1>Shum</h1>
       <Toolbar :is-dark="isDark" @toggle-theme="isDark = !isDark" />
     </header>
-    <main>
+    <main v-if="!selectedNode">
       <OverviewCards :overview="overview" />
       <div class="node-filters">
         <GroupFilter
@@ -46,15 +74,15 @@ function selectGroup(group) {
           v-for="node in filteredNodes"
           :key="node.name"
           :node="node"
-          @select="selectedNode = getNodeDetails($event)"
+          @select="openNode"
         />
       </section>
     </main>
-    <button class="translate">文</button>
+    <button v-if="!selectedNode" class="translate">文</button>
     <NodeDetails
       v-if="selectedNode"
       :node="selectedNode"
-      @close="selectedNode = null"
+      @close="closeDetails"
     />
   </div>
 </template>

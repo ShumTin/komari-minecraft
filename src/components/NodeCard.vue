@@ -20,11 +20,16 @@ defineEmits(["select"]);
         <h2>{{ node.name }}</h2>
       </div>
       <div class="node-actions">
-        <div class="price price-top">
-          ◎ ${{ node.name.startsWith("Tokyo") ? "5/月" : "49.99/年" }}
-        </div>
         <span class="node-flag">{{ node.flag }}</span>
       </div>
+    </div>
+    <div class="node-meta">
+      <span>⟳ 在线 <b>{{ node.online }}</b></span>
+      <span>▣ 到期 <b class="expire">{{ node.expires }}</b></span>
+      <span
+        >◎
+        <b class="cost">${{ node.name.startsWith("Tokyo") ? "5/月" : "49.99/年" }}</b></span
+      >
     </div>
     <div class="metric-grid">
       <NodeMetric
@@ -46,11 +51,11 @@ defineEmits(["select"]);
         :percent="node.disk"
         tone="orange"
       /><NodeMetric
-        label="负载"
-        value="0.00"
-        detail=""
-        percent="0"
-        tone="pink"
+        label="流量"
+        value="979 GB"
+        detail="20.9 GB / 1000 GB"
+        percent="3"
+        tone="green"
       />
     </div>
     <div class="traffic-grid">
@@ -74,21 +79,10 @@ defineEmits(["select"]);
         <span>◎ 入站</span><b>{{ node.in }}</b>
       </div>
     </div>
-    <div class="quota">
-      <span>▣ 剩余流量 <b>979 GB</b></span
-      ><span>20.9 GB / 1000 GB</span><i><b style="width: 3%" /></i>
-    </div>
     <div class="latency-grid">
       <div><span>◷ 延迟</span><b>未配置</b></div>
       <div><span>♧ 丢包率</span><b>未配置</b></div>
       <small>未配置首页 Ping</small><small>未配置首页 Ping</small>
-    </div>
-    <div class="node-footer">
-      <span
-        >⟳ 在线 <b>{{ node.online }}</b></span
-      ><span
-        >▣ 到期 <b class="expire">{{ node.expires }}</b></span
-      >
     </div>
   </article>
 </template>

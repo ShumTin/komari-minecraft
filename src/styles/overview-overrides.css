@@ -1,7 +1,6 @@
 .overview-card {
-  position: relative;
-  min-height: 104px;
-  padding: 16px 19px;
+  min-height: 114px;
+  padding: 18px 20px 14px;
 }
 
 .overview-label {
@@ -18,7 +17,7 @@
 }
 
 .overview-value {
-  margin-top: 12px;
+  margin-top: 13px;
   color: #18181b;
   font-size: 22px;
   font-weight: 600;
@@ -37,6 +36,29 @@
   margin-top: 8px;
   color: #656a73;
   font-size: 11px;
+}
+
+.overview-card .traffic-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.traffic-upload {
+  color: #0f9f72;
+}
+
+.traffic-download {
+  color: #3467bd;
+}
+
+.bandwidth-upload {
+  color: #5a7fbd;
+}
+
+.bandwidth-download {
+  color: #456da9;
 }
 
 .overview-card .overview-status {

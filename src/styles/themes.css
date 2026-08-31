@@ -18,7 +18,7 @@
   background: #2f3742;
   color: #fff;
 }
-.monitor-app.is-dark .overview-card,
+.monitor-app.is-dark .overview-grid,
 .monitor-app.is-dark .group-bar,
 .monitor-app.is-dark .node-card {
   border-color: #3d444d;

@@ -1,7 +1,8 @@
+import { toRaw } from "vue";
 import { groups, nodes, overview } from "./data.js";
 
 function clone(value) {
-  return structuredClone(value);
+  return structuredClone(toRaw(value));
 }
 
 export function getOverview() {
