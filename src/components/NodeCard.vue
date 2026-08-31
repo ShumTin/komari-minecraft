@@ -1,5 +1,6 @@
 <script setup>
 import AppIcon from "./AppIcon.vue";
+import FlagIcon from "./FlagIcon.vue";
 import NodeMetric from "./NodeMetric.vue";
 import SystemIcon from "./SystemIcon.vue";
 import TrafficMetric from "./TrafficMetric.vue";
@@ -43,7 +44,7 @@ function sampleTime(index) {
   >
     <div class="node-head">
       <div class="node-title">
-        <span class="node-flag">{{ node.flag }}</span>
+        <FlagIcon class="node-flag" :code="node.group" :label="`${node.group} 节点`" />
         <h2>{{ node.name }}</h2>
       </div>
       <div class="node-actions">

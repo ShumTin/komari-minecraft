@@ -1,5 +1,6 @@
 <script setup>
 import AppIcon from "./AppIcon.vue";
+import FlagIcon from "./FlagIcon.vue";
 import SystemIcon from "./SystemIcon.vue";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { getNodeStatus, getNodeStatusLabel } from "../utils/nodeStatus.js";
@@ -28,10 +29,11 @@ onBeforeUnmount(() => document.removeEventListener("click", closeHostMenu));
   <main class="details-page">
     <section class="details-hero">
       <button class="details-back" aria-label="返回节点列表" @click="$emit('close')"><AppIcon name="back" /></button>
+      <FlagIcon class="hero-flag" :code="node.group" :label="`${node.group} 节点`" />
       <div class="hero-copy">
         <div class="hero-title-row"><h1>{{ node.name }}</h1><button class="host-menu-trigger" aria-label="选择主机" @click="showHostMenu = !showHostMenu"><AppIcon :name="showHostMenu ? 'chevronUp' : 'chevronDown'" /></button>
         <div v-if="showHostMenu" class="host-menu">
-          <button v-for="host in props.hosts" :key="host.name" :class="{ active: host.name === node.name }" @click="emit('select-host', host.name); showHostMenu = false"><i class="node-status-dot" :class="getNodeStatus(host.status)" />{{ host.name }}</button>
+          <button v-for="host in props.hosts" :key="host.name" :class="{ active: host.name === node.name }" @click="emit('select-host', host.name); showHostMenu = false"><FlagIcon :code="host.group" :label="`${host.group} 节点`" /><i class="node-status-dot" :class="getNodeStatus(host.status)" />{{ host.name }}</button>
         </div>
         </div>
       </div>

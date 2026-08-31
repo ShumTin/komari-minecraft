@@ -31,9 +31,9 @@
   border-radius: 7px;
 }
 
-.group-bar button span {
+.group-bar button .flag-icon,
+.group-bar button .flag-fallback {
   margin-right: 8px;
-  font-size: 13px;
 }
 
 .group-bar button i {

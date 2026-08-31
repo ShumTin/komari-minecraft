@@ -146,7 +146,33 @@
 }
 
 .node-flag {
-  font-size: 13px;
+  width: 24px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+.flag-icon {
+  display: block;
+  width: 24px;
+  height: 17px;
+  overflow: hidden;
+  border: 1px solid #dfe2e7;
+  border-radius: 3px;
+  box-sizing: border-box;
+  object-fit: contain;
+}
+
+.flag-fallback {
+  display: inline-flex;
+  width: 24px;
+  height: 17px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dfe2e7;
+  border-radius: 3px;
+  color: #69717c;
+  font-size: 8px;
+  font-weight: 700;
 }
 
 .metric-grid {

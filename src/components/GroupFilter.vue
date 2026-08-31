@@ -1,4 +1,6 @@
 <script setup>
+import FlagIcon from "./FlagIcon.vue";
+
 defineProps({
   groups: { type: Array, required: true },
   activeGroup: { type: String, default: "all" },
@@ -20,8 +22,8 @@ defineEmits(["select"]);
       :class="{ active: activeGroup === group.code }"
       @click="$emit('select', group.code)"
     >
-      <span>{{ group.flag }}</span
-      >{{ group.code }} <i>{{ group.count }}</i>
+      <FlagIcon :code="group.code" :label="`${group.code} 节点`" />
+      {{ group.code }} <i>{{ group.count }}</i>
     </button>
   </section>
 </template>
