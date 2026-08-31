@@ -1,0 +1,61 @@
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.overview-card {
+  min-height: 115px;
+  border: 1px solid #e6e6e8;
+  border-radius: 16px;
+  padding: 17px 16px 13px;
+  background: #fff;
+  box-shadow: 0 2px 10px #00000003;
+}
+
+.overview-card > span {
+  display: flex;
+  justify-content: space-between;
+  color: #686b72;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.overview-card > span i {
+  color: #777b83;
+  font-style: normal;
+  font-size: 15px;
+}
+
+.overview-card > b {
+  display: block;
+  margin-top: 13px;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.7px;
+}
+
+.overview-card > b small {
+  margin-left: 4px;
+  color: #727680;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.overview-card p {
+  margin: 8px 0 0;
+  color: #62666f;
+  font-size: 11px;
+}
+
+.orange-text {
+  color: #d8782b;
+}
+
+.overview-line {
+  height: 6px;
+  margin-top: 16px;
+  border-radius: 10px;
+  background: #69b489;
+}

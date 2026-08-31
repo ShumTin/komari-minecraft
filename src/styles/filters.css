@@ -1,0 +1,47 @@
+.node-filters {
+  display: flex;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.group-bar {
+  height: 53px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 25px;
+  border: 1px solid #e8e8ea;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.group-bar button {
+  border: 0;
+  background: transparent;
+  color: #545861;
+  font: 600 12px inherit;
+  cursor: pointer;
+  padding: 5px 8px;
+}
+
+.group-bar button.active {
+  color: #18181b;
+  background: #f1f2f4;
+  border-radius: 7px;
+}
+
+.group-bar button span {
+  margin-right: 8px;
+  font-size: 13px;
+}
+
+.group-bar button i {
+  margin-left: 5px;
+  padding: 3px 6px;
+  border-radius: 7px;
+  background: #f5f5f6;
+  color: #8b8e95;
+  font-style: normal;
+  font-size: 10px;
+}

@@ -9,5 +9,12 @@ defineProps({
 </script>
 
 <template>
-  <div class="metric"><div class="metric-label"><span>◉ {{ label }}</span><b>{{ value }}</b></div><small>{{ detail }}</small><i><b :class="tone" :style="{ width: `${percent}%` }"/></i></div>
+  <div class="metric">
+    <div class="metric-label">
+      <span>◉ {{ label }}</span
+      ><b>{{ value }}</b>
+    </div>
+    <small>{{ detail }}</small
+    ><i><b :class="tone" :style="{ width: `${percent}%` }" /></i>
+  </div>
 </template>

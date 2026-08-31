@@ -1,0 +1,66 @@
+.overview-card {
+  position: relative;
+  min-height: 104px;
+  padding: 16px 19px;
+}
+
+.overview-label {
+  color: #50545c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.overview-label i {
+  margin-left: 5px;
+  color: #4b5eaa;
+  font-size: 11px;
+  font-style: normal;
+}
+
+.overview-value {
+  margin-top: 12px;
+  color: #18181b;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+
+.overview-value small {
+  margin-left: 5px;
+  color: #6b7079;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.overview-card p {
+  margin-top: 8px;
+  color: #656a73;
+  font-size: 11px;
+}
+
+.overview-card .overview-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #626872;
+}
+
+.overview-status b {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+.overview-card .overview-icon {
+  position: absolute;
+  top: 36px;
+  right: 22px;
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  color: #18181b;
+  font-size: 27px;
+}

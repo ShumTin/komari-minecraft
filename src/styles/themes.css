@@ -1,0 +1,78 @@
+.monitor-app.is-dark {
+  background: #212830;
+  color: #d1d7e0;
+}
+
+.monitor-app.is-dark .header h1 {
+  color: #e4e8ee;
+}
+
+.monitor-app.is-dark .toolbar button {
+  border-color: #3d444d;
+  background: #262c36;
+  color: #b7bdc8;
+}
+
+.monitor-app.is-dark .toolbar button:hover {
+  border-color: #656c76;
+  background: #2f3742;
+  color: #fff;
+}
+.monitor-app.is-dark .overview-card,
+.monitor-app.is-dark .group-bar,
+.monitor-app.is-dark .node-card {
+  border-color: #3d444d;
+  background: #262c36;
+  box-shadow: none;
+}
+.monitor-app.is-dark .overview-label,
+.monitor-app.is-dark .overview-card p,
+.monitor-app.is-dark .metric-label,
+.monitor-app.is-dark .io-grid span,
+.monitor-app.is-dark .quota,
+.monitor-app.is-dark .latency-grid div,
+.monitor-app.is-dark .node-footer {
+  color: #b7bdc8;
+}
+.monitor-app.is-dark .overview-value,
+.monitor-app.is-dark .overview-card .overview-icon,
+.monitor-app.is-dark .node-title h2,
+.monitor-app.is-dark .metric-label b {
+  color: #d1d7e0;
+}
+.monitor-app.is-dark .overview-value small,
+.monitor-app.is-dark .metric small,
+.monitor-app.is-dark .io-grid b,
+.monitor-app.is-dark .quota > span:last-of-type,
+.monitor-app.is-dark .latency-grid div b,
+.monitor-app.is-dark .latency-grid small {
+  color: #9198a1;
+}
+
+.monitor-app.is-dark .group-bar button {
+  color: #d1d7e0;
+}
+
+.monitor-app.is-dark .group-bar button i {
+  background: #343b45;
+  color: #b7bdc8;
+}
+
+.monitor-app.is-dark .node-actions button {
+  color: #9198a1;
+}
+.monitor-app.is-dark .traffic-grid,
+.monitor-app.is-dark .io-grid,
+.monitor-app.is-dark .quota,
+.monitor-app.is-dark .latency-grid {
+  border-color: #3d444d;
+}
+.monitor-app.is-dark .metric > i,
+.monitor-app.is-dark .traffic > i,
+.monitor-app.is-dark .quota > i {
+  background: repeating-linear-gradient(
+    90deg,
+    #343b45 0 8px,
+    transparent 8px 11px
+  );
+}

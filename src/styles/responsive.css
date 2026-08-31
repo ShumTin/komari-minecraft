@@ -1,0 +1,26 @@
+@media (max-width: 800px) {
+  .monitor-app {
+    padding: 0 16px 30px;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .toolbar {
+    gap: 4px;
+  }
+
+  .toolbar button {
+    width: 31px;
+    height: 31px;
+  }
+
+  .node-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .node-card {
+    min-width: 0;
+  }
+}
