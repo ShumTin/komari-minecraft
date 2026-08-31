@@ -17,13 +17,13 @@
 }
 
 .monitor-app.is-dark .toolbar button {
-  border-color: #3d444d;
-  background: #262c36;
+  border-color: transparent;
+  background: transparent;
   color: #b7bdc8;
 }
 
 .monitor-app.is-dark .toolbar button:hover {
-  border-color: #656c76;
+  border-color: transparent;
   background: #2f3742;
   color: #fff;
 }
@@ -48,6 +48,11 @@
 .monitor-app.is-dark .node-title h2,
 .monitor-app.is-dark .metric-label b {
   color: #d1d7e0;
+}
+.monitor-app.is-dark .overview-card .overview-icon {
+  border-color: #3e6668;
+  background: #294648;
+  color: #83d8d0;
 }
 .monitor-app.is-dark .overview-value small,
 .monitor-app.is-dark .metric small,

@@ -1,4 +1,6 @@
 <script setup>
+import { Moon, Settings, Sun } from "lucide-vue-next";
+
 defineProps({ isDark: Boolean });
 defineEmits(["toggle-theme"]);
 </script>
@@ -10,8 +12,9 @@ defineEmits(["toggle-theme"]);
       :aria-label="isDark ? '切换为浅色' : '切换为深色'"
       @click="$emit('toggle-theme')"
     >
-      {{ isDark ? "☼" : "☾" }}
+      <Sun v-if="isDark" :size="18" :stroke-width="1.8" aria-hidden="true" />
+      <Moon v-else :size="18" :stroke-width="1.8" aria-hidden="true" />
     </button>
-    <button title="设置" aria-label="设置">⚙</button>
+    <button title="设置" aria-label="设置"><Settings :size="17" :stroke-width="1.8" aria-hidden="true" /></button>
   </div>
 </template>

@@ -41,6 +41,7 @@ export const nodes = [
     online: "4 小时",
     expires: "268 天",
     color: "green",
+    status: "online",
   },
   {
     name: "Tokyo - AWS Lightsail",
@@ -61,5 +62,6 @@ export const nodes = [
     online: "9 天",
     expires: "20 天",
     color: "orange",
+    status: "offline",
   },
 ];

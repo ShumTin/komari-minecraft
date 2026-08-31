@@ -103,16 +103,27 @@ body {
 .toolbar button {
   width: 35px;
   height: 35px;
-  border: 1px solid #e4e4e7;
-  border-radius: 50%;
-  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
   color: #5f636b;
   font: 16px inherit;
+  line-height: 1;
+  padding: 0;
   cursor: pointer;
   box-shadow: 0 1px 2px #00000005;
 }
 
 .toolbar button:hover {
   color: #18181b;
-  border-color: #c9cbd0;
+  border-color: transparent;
+  background: #e8edf0;
+}
+
+.toolbar button:focus-visible {
+  outline: 2px solid #9bb4e8;
+  outline-offset: 2px;
 }

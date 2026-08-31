@@ -1,5 +1,8 @@
 <script setup>
+import AppIcon from "./AppIcon.vue";
+import SystemIcon from "./SystemIcon.vue";
 import { onBeforeUnmount, onMounted, ref } from "vue";
+import { getNodeStatus, getNodeStatusLabel } from "../utils/nodeStatus.js";
 
 const props = defineProps({
   node: { type: Object, required: true },
@@ -24,44 +27,44 @@ onBeforeUnmount(() => document.removeEventListener("click", closeHostMenu));
 <template>
   <main class="details-page">
     <section class="details-hero">
-      <button class="details-back" aria-label="返回节点列表" @click="$emit('close')">←</button>
+      <button class="details-back" aria-label="返回节点列表" @click="$emit('close')"><AppIcon name="back" /></button>
       <div class="hero-copy">
-        <div class="hero-title-row"><h1>{{ node.name }}</h1><button class="host-menu-trigger" aria-label="选择主机" @click="showHostMenu = !showHostMenu">{{ showHostMenu ? '⌃' : '⌄' }}</button>
+        <div class="hero-title-row"><h1>{{ node.name }}</h1><button class="host-menu-trigger" aria-label="选择主机" @click="showHostMenu = !showHostMenu"><AppIcon :name="showHostMenu ? 'chevronUp' : 'chevronDown'" /></button>
         <div v-if="showHostMenu" class="host-menu">
-          <button v-for="host in props.hosts" :key="host.name" :class="{ active: host.name === node.name }" @click="emit('select-host', host.name); showHostMenu = false"><i />{{ host.name }}</button>
+          <button v-for="host in props.hosts" :key="host.name" :class="{ active: host.name === node.name }" @click="emit('select-host', host.name); showHostMenu = false"><i class="node-status-dot" :class="getNodeStatus(host.status)" />{{ host.name }}</button>
         </div>
         </div>
       </div>
-      <div class="hero-status">
-        <span><i />在线</span>
+      <div class="hero-status" :class="getNodeStatus(node.status)">
+        <span><i class="node-status-dot" :class="getNodeStatus(node.status)" />{{ getNodeStatusLabel(node.status) }}</span>
         <small>最后更新 {{ node.updatedAt }}</small>
       </div>
     </section>
     <div class="details-info-grid">
       <section class="info-panel">
-        <h2>⌁ 网络信息</h2>
+        <h2><AppIcon name="network" /> 网络信息</h2>
         <div class="info-items">
-          <div><span>↕　实时速度</span><b>↑ {{ node.up }} {{ node.upUnit }} · ↓ {{ node.down }} {{ node.downUnit }}</b></div>
-          <div><span>◉　峰值速度</span><b>↑ 3.77 MB/s (09:05) · ↓ 4.29 MB/s (00:10)</b></div>
-          <div><span>▥　今日流量</span><b>↑ {{ node.out }} · ↓ {{ node.in }}</b></div>
-          <div><span>♧　连接 / 进程</span><b>95 / 187</b></div>
+          <div><span><AppIcon name="activity" /> 实时速度</span><b><AppIcon name="upload" /> {{ node.up }} {{ node.upUnit }} · <AppIcon name="download" /> {{ node.down }} {{ node.downUnit }}</b></div>
+          <div><span><AppIcon name="activity" /> 峰值速度</span><b><AppIcon name="upload" /> 3.77 MB/s (09:05) · <AppIcon name="download" /> 4.29 MB/s (00:10)</b></div>
+          <div><span><AppIcon name="database" /> 今日流量</span><b><AppIcon name="upload" /> {{ node.out }} · <AppIcon name="download" /> {{ node.in }}</b></div>
+          <div><span><AppIcon name="network" /> 连接 / 进程</span><b>95 / 187</b></div>
         </div>
       </section>
       <section class="info-panel">
-        <h2>▣ 系统信息</h2>
+        <h2><AppIcon name="monitor" /> 系统信息</h2>
         <div class="info-items">
-          <div><span>▱　操作系统</span><b><i class="system-icon">◉</i> Debian GNU/Linux 13 (trixie)</b></div>
-          <div><span>〈〉　内核版本</span><b>6.12.8+deb13-amd64</b></div>
-          <div><span>◷　运行时间</span><b>20 小时 39 分钟</b></div>
-          <div><span>▤　厂商</span><b>洛杉矶 · BandwagonHost · AS25820</b></div>
+          <div><span><AppIcon name="server" /> 操作系统</span><b><SystemIcon :system="node.os" /> {{ node.os }}</b></div>
+          <div><span><AppIcon name="cpu" /> 内核版本</span><b>6.12.8+deb13-amd64</b></div>
+          <div><span><AppIcon name="clock" /> 运行时间</span><b>20 小时 39 分钟</b></div>
+          <div><span><AppIcon name="database" /> 厂商</span><b>洛杉矶 · BandwagonHost · AS25820</b></div>
         </div>
       </section>
     </div>
     <section class="details-panel">
       <div class="chart-toolbar">
         <div class="chart-switch">
-          <button :class="{ active: chartMode === 'load' }" @click="chartMode = 'load'">⌁ 负载</button>
-          <button :class="{ active: chartMode === 'latency' }" @click="chartMode = 'latency'">◌ 延迟</button>
+          <button :class="{ active: chartMode === 'load' }" @click="chartMode = 'load'"><AppIcon name="activity" /> 负载</button>
+          <button :class="{ active: chartMode === 'latency' }" @click="chartMode = 'latency'"><AppIcon name="clock" /> 延迟</button>
         </div>
         <div class="chart-switch time-switch">
           <button :class="{ active: timeRange === 'realtime' }" @click="timeRange = 'realtime'">实时</button>

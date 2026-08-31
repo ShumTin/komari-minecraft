@@ -9,6 +9,12 @@
   box-sizing: border-box;
 }
 
+.app-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  vertical-align: -0.16em;
+}
+
 body {
   margin: 0;
 }
