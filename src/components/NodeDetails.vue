@@ -1,9 +1,9 @@
 <script setup>
 import AppIcon from "./AppIcon.vue";
-import FlagIcon from "./FlagIcon.vue";
 import SystemIcon from "./SystemIcon.vue";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { getNodeStatus, getNodeStatusLabel } from "../utils/nodeStatus.js";
+import { formatByteRate } from "../utils/format.js";
 
 const props = defineProps({
   node: { type: Object, required: true },
@@ -29,24 +29,23 @@ onBeforeUnmount(() => document.removeEventListener("click", closeHostMenu));
   <main class="details-page">
     <section class="details-hero">
       <button class="details-back" aria-label="返回节点列表" @click="$emit('close')"><AppIcon name="back" /></button>
-      <FlagIcon class="hero-flag" :code="node.group" :label="`${node.group} 节点`" />
       <div class="hero-copy">
         <div class="hero-title-row"><h1>{{ node.name }}</h1><button class="host-menu-trigger" aria-label="选择主机" @click="showHostMenu = !showHostMenu"><AppIcon :name="showHostMenu ? 'chevronUp' : 'chevronDown'" /></button>
         <div v-if="showHostMenu" class="host-menu">
-          <button v-for="host in props.hosts" :key="host.name" :class="{ active: host.name === node.name }" @click="emit('select-host', host.name); showHostMenu = false"><FlagIcon :code="host.group" :label="`${host.group} 节点`" /><i class="node-status-dot" :class="getNodeStatus(host.status)" />{{ host.name }}</button>
+          <button v-for="host in props.hosts" :key="host.name" :class="{ active: host.name === node.name }" @click="emit('select-host', host.name); showHostMenu = false"><i class="node-status-dot" :class="getNodeStatus(host.status)" />{{ host.name }}</button>
         </div>
         </div>
       </div>
       <div class="hero-status" :class="getNodeStatus(node.status)">
         <span><i class="node-status-dot" :class="getNodeStatus(node.status)" />{{ getNodeStatusLabel(node.status) }}</span>
-        <small>最后更新 {{ node.updatedAt }}</small>
+        <small>最后更新 <time>{{ node.updatedAt || "--:--:--" }}</time></small>
       </div>
     </section>
     <div class="details-info-grid">
       <section class="info-panel">
         <h2><AppIcon name="network" /> 网络信息</h2>
         <div class="info-items">
-          <div><span><AppIcon name="activity" /> 实时速度</span><b><AppIcon name="upload" /> {{ node.up }} {{ node.upUnit }} · <AppIcon name="download" /> {{ node.down }} {{ node.downUnit }}</b></div>
+          <div><span><AppIcon name="activity" /> 实时速度</span><b><AppIcon name="upload" /> {{ formatByteRate(node.up, node.upUnit).value }} {{ formatByteRate(node.up, node.upUnit).unit }} · <AppIcon name="download" /> {{ formatByteRate(node.down, node.downUnit).value }} {{ formatByteRate(node.down, node.downUnit).unit }}</b></div>
           <div><span><AppIcon name="activity" /> 峰值速度</span><b><AppIcon name="upload" /> 3.77 MB/s (09:05) · <AppIcon name="download" /> 4.29 MB/s (00:10)</b></div>
           <div><span><AppIcon name="database" /> 今日流量</span><b><AppIcon name="upload" /> {{ node.out }} · <AppIcon name="download" /> {{ node.in }}</b></div>
           <div><span><AppIcon name="network" /> 连接 / 进程</span><b>95 / 187</b></div>

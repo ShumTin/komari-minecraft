@@ -66,15 +66,16 @@ body {
 }
 
 .monitor-app {
+  --page-gutter: max(32px, calc((100vw - 1320px) / 2));
   min-height: 100vh;
-  padding: 0 4.1vw 40px;
+  padding: 0 var(--page-gutter) 40px;
   background: #f4f4f5;
 }
 
 .header {
   height: 58px;
-  margin: 0 -4.1vw;
-  padding: 0 4.1vw;
+  margin: 0 calc(-1 * var(--page-gutter));
+  padding: 0 var(--page-gutter);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -127,3 +128,14 @@ body {
   outline: 2px solid #9bb4e8;
   outline-offset: 2px;
 }
+.data-error,
+.empty-state {
+  margin: 18px 0;
+  padding: 14px 18px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  color: #7d8791;
+  text-align: center;
+}
+
+.data-error { color: #c24141; }

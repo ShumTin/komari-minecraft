@@ -46,8 +46,8 @@
 .details-back .app-icon { vertical-align: middle; }
 .details-hero { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .hero-country { margin: 0 14px 0 4px; font-size: 16px; }
-.hero-flag { width: 28px; height: 19px; margin: 0 5px 0 4px; }
-.hero-flag.flag-icon { width: 28px; height: 19px; }
+.hero-flag { width: 26px; height: 18px; margin: 0 5px 0 4px; }
+.hero-flag.flag-icon { width: 26px; height: 18px; }
 .hero-copy { position: relative; min-width: 0; }
 .hero-copy > .hero-title-row { display: flex; align-items: center; gap: 9px; }
 .hero-title-row { position: relative; }
@@ -57,12 +57,13 @@
 .host-menu-trigger:focus-visible { border-color: #d7e0e7; background: #fff; }
 .host-menu { position: absolute; z-index: 5; top: 34px; left: calc(100% - 29px); width: 220px; padding: 6px; border: 1px solid #e0e7ee; border-radius: 14px; background: #fff; box-shadow: 0 8px 20px #24345d1c; }
 .host-menu button { display: flex; width: 100%; align-items: center; gap: 9px; border: 0; border-radius: 8px; padding: 9px 10px; background: transparent; color: #596675; font: 500 12px inherit; text-align: left; cursor: pointer; }
-.host-menu .flag-icon, .host-menu .flag-fallback { width: 22px; height: 15px; flex: 0 0 auto; }
+.host-menu .flag-icon, .host-menu .flag-fallback { width: 20px; height: 14px; flex: 0 0 auto; }
 .host-menu button:hover, .host-menu button.active { background: #f0f4ff; color: #222d3b; }
 .host-menu i { width: 8px; height: 8px; border-radius: 50%; background: #14a875; }
 .hero-copy b { padding: 2px 8px; border: 1px solid #9bded1; border-radius: 8px; background: #e7f8f3; color: #138b7d; font-size: 10px; font-weight: 600; }
 .hero-status { display: flex; align-items: center; gap: 16px; margin-left: auto; color: #159968; font-size: 13px; }
 .hero-status.offline { color: #dc5656; }
+.hero-status.warning { color: #d39424; }
 .hero-status.unknown { color: #d39424; }
 .hero-status span { display: inline-flex; align-items: center; gap: 6px; }
 .hero-status i { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; }

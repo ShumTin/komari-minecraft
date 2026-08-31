@@ -17,6 +17,8 @@
 }
 
 .group-bar button {
+  display: inline-flex;
+  align-items: center;
   border: 0;
   background: transparent;
   color: #545861;

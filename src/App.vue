@@ -10,21 +10,24 @@ import {
   getNodes,
   getNodeDetails,
   getOverview,
+  refreshMockData,
 } from "./mock/mockService.js";
 
 const isDark = ref(false);
 const siteIcon = ref("◉");
 const activeGroup = ref("all");
 const selectedNode = ref(null);
-const overview = getOverview();
-const groups = getGroups();
-const nodes = getNodes();
-const filteredNodes = ref(nodes);
+const overview = ref(getOverview());
+const groups = ref(getGroups());
+const nodes = ref(getNodes());
+const filteredNodes = ref(nodes.value);
+const errorMessage = ref("");
+let refreshTimer;
 
 function findNodeFromLocation() {
   const match = window.location.pathname.match(/^\/nodes\/(.+)$/);
   if (!match) return null;
-  const node = nodes.find((item) => encodeURIComponent(item.name) === match[1]);
+  const node = nodes.value.find((item) => encodeURIComponent(item.name) === match[1]);
   return node ? getNodeDetails(node) : null;
 }
 
@@ -42,16 +45,36 @@ function closeDetails() {
   selectedNode.value = null;
 }
 
+function refreshData() {
+  try {
+    const snapshot = refreshMockData();
+    nodes.value = snapshot.nodes;
+    groups.value = snapshot.groups;
+    overview.value = snapshot.overview;
+    selectGroup(activeGroup.value);
+    if (selectedNode.value) {
+      selectedNode.value = nodes.value.find((node) => node.name === selectedNode.value.name) || null;
+    }
+    errorMessage.value = "";
+  } catch (error) {
+    errorMessage.value = "数据刷新失败，请稍后重试。";
+  }
+}
+
 onMounted(() => {
   syncRoute();
   window.addEventListener("popstate", syncRoute);
+  refreshTimer = window.setInterval(refreshData, 15000);
 });
-onBeforeUnmount(() => window.removeEventListener("popstate", syncRoute));
+onBeforeUnmount(() => {
+  window.removeEventListener("popstate", syncRoute);
+  window.clearInterval(refreshTimer);
+});
 
 function selectGroup(group) {
   activeGroup.value = group;
   filteredNodes.value =
-    group === "all" ? nodes : nodes.filter((node) => node.group === group);
+    group === "all" ? nodes.value : nodes.value.filter((node) => node.group === group);
 }
 </script>
 
@@ -62,10 +85,11 @@ function selectGroup(group) {
         <span class="site-icon" aria-hidden="true">{{ siteIcon }}</span>
         <h1>Shum</h1>
       </div>
-      <Toolbar :is-dark="isDark" @toggle-theme="isDark = !isDark" />
+      <Toolbar :is-dark="isDark" @toggle-theme="isDark = !isDark" @refresh="refreshData" />
     </header>
     <main v-if="!selectedNode">
       <OverviewCards :overview="overview" />
+      <p v-if="errorMessage" class="data-error" role="alert">{{ errorMessage }}</p>
       <div class="node-filters">
         <GroupFilter
           :groups="groups"
@@ -81,6 +105,7 @@ function selectGroup(group) {
           @select="openNode"
         />
       </section>
+      <p v-if="!errorMessage && filteredNodes.length === 0" class="empty-state">暂无匹配节点</p>
     </main>
     <button v-if="!selectedNode" class="translate">文</button>
     <NodeDetails

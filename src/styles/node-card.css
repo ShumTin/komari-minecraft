@@ -1,11 +1,12 @@
 .node-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 414px));
-  gap: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
   padding-top: 18px;
 }
 
 .node-card {
+  min-width: 0;
   border: 1px solid #e6e6e8;
   border-radius: 16px;
   padding: 19px 18px 14px;
@@ -68,6 +69,8 @@
   box-shadow: 0 0 0 4px #dc262624;
 }
 
+.node-status-dot.warning { background: #d39424; }
+
 .node-status-dot.unknown {
   background: #e9a23b;
   box-shadow: 0 0 0 4px #e9a23b2e;
@@ -125,7 +128,7 @@
 
 .node-meta b {
   color: #4d83e6;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
 }
 
@@ -146,30 +149,26 @@
 }
 
 .node-flag {
-  width: 24px;
-  height: 17px;
+  width: 22px;
+  height: 15px;
   flex: 0 0 auto;
 }
 
 .flag-icon {
   display: block;
-  width: 24px;
-  height: 17px;
+  width: 22px;
+  height: 15px;
   overflow: hidden;
-  border: 1px solid #dfe2e7;
-  border-radius: 3px;
   box-sizing: border-box;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .flag-fallback {
   display: inline-flex;
-  width: 24px;
-  height: 17px;
+  width: 22px;
+  height: 15px;
   align-items: center;
   justify-content: center;
-  border: 1px solid #dfe2e7;
-  border-radius: 3px;
   color: #69717c;
   font-size: 8px;
   font-weight: 700;
@@ -195,7 +194,7 @@
   justify-content: space-between;
   align-items: baseline;
   color: #646973;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .metric-label > span,
@@ -209,7 +208,7 @@
 
 .metric-label b {
   color: #292c32;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -218,7 +217,7 @@
   min-height: 14px;
   margin-top: 5px;
   color: #858a93;
-  font-size: 10px;
+  font-size: 11px;
 }
 .metric > i,
 .traffic > i,
@@ -285,7 +284,7 @@
 
 .traffic > div b {
   color: #46a56d;
-  font-size: 21px;
+  font-size: 13px;
 }
 
 .traffic > div b.orange {
@@ -309,12 +308,12 @@
 
 .io-grid span {
   color: #4c9f72;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .io-grid b {
   color: #6a7079;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -398,7 +397,7 @@
 .signal-bars {
   grid-column: 1 / -1;
   display: flex;
-  gap: 3px;
+  gap: 2px;
   height: 10px;
   margin-top: 2px;
   overflow: visible;
@@ -476,7 +475,8 @@
 .signal-bars > i.light-green { background: #8bd45d; }
 .signal-bars > i.yellow { background: #f3c64d; }
 .signal-bars > i.red { background: #f06462; }
-.signal-bars > i.loss { background: #aeb8bd; }
+.signal-bars > i.packet-ok { background: #08a875; }
+.signal-bars > i.packet-loss { background: #f06462; }
 
 .monitor-app.is-dark .latency-panel h3,
 .monitor-app.is-dark .latency-row { color: #aeb9c6; }

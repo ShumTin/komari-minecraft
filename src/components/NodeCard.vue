@@ -5,6 +5,7 @@ import NodeMetric from "./NodeMetric.vue";
 import SystemIcon from "./SystemIcon.vue";
 import TrafficMetric from "./TrafficMetric.vue";
 import { getNodeStatus, getNodeStatusLabel } from "../utils/nodeStatus.js";
+import { formatByteRate } from "../utils/format.js";
 
 defineProps({ node: { type: Object, required: true } });
 defineEmits(["select"]);
@@ -26,6 +27,14 @@ function latencyTone(value) {
   if (value < 150) return "light-green";
   if (value < 300) return "yellow";
   return "red";
+}
+
+function packetTone(packetLoss) {
+  return Number.parseFloat(packetLoss) > 0 ? "packet-loss" : "packet-ok";
+}
+
+function getPacketLoss(node) {
+  return node.packetLoss || (node.status === "warning" ? "1.2%" : "0.0%");
 }
 
 function sampleTime(index) {
@@ -96,14 +105,14 @@ function sampleTime(index) {
     <div class="traffic-grid">
       <TrafficMetric
         label="上行"
-        :value="node.up"
-        :unit="node.upUnit"
+        :value="formatByteRate(node.up, node.upUnit).value"
+        :unit="formatByteRate(node.up, node.upUnit).unit"
         tone="blue"
         direction="up"
       /><TrafficMetric
         label="下行"
-        :value="node.down"
-        :unit="node.downUnit"
+        :value="formatByteRate(node.down, node.downUnit).value"
+        :unit="formatByteRate(node.down, node.downUnit).unit"
         tone="orange"
         direction="down"
       />
@@ -127,8 +136,8 @@ function sampleTime(index) {
       <div class="latency-panel">
         <h3>丢包</h3>
         <div v-for="line in packetLines" :key="line.name" class="latency-row">
-          <span class="line-name">{{ line.name }}</span><b>{{ line.value }}</b>
-          <span class="signal-bars"><i v-for="segment in 20" :key="segment" class="loss" :data-tooltip="`${sampleTime(segment - 1)}\n0.0%`" /></span>
+          <span class="line-name">{{ line.name }}</span><b>{{ getPacketLoss(node) }}</b>
+          <span class="signal-bars"><i v-for="segment in 20" :key="segment" :class="packetTone(getPacketLoss(node))" :data-tooltip="`${sampleTime(segment - 1)}\n${getPacketLoss(node)}`" /></span>
         </div>
       </div>
     </div>
