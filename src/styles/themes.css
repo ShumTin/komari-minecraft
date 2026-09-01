@@ -10,19 +10,15 @@
 .monitor-app.is-dark .header h1 {
   color: #e4e8ee;
 }
-.monitor-app.is-dark .site-icon {
-  border-color: #455575;
-  background: #303b58;
-  color: #b6c8ff;
-}
-
-.monitor-app.is-dark .toolbar button {
+.monitor-app.is-dark .toolbar button,
+.monitor-app.is-dark .toolbar a {
   border-color: transparent;
   background: transparent;
   color: #b7bdc8;
 }
 
-.monitor-app.is-dark .toolbar button:hover {
+.monitor-app.is-dark .toolbar button:hover,
+.monitor-app.is-dark .toolbar a:hover {
   border-color: transparent;
   background: #2f3742;
   color: #fff;

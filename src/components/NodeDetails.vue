@@ -32,7 +32,7 @@ onBeforeUnmount(() => document.removeEventListener("click", closeHostMenu));
       <div class="hero-copy">
         <div class="hero-title-row"><h1>{{ node.name }}</h1><button class="host-menu-trigger" aria-label="选择主机" @click="showHostMenu = !showHostMenu"><AppIcon :name="showHostMenu ? 'chevronUp' : 'chevronDown'" /></button>
         <div v-if="showHostMenu" class="host-menu">
-          <button v-for="host in props.hosts" :key="host.name" :class="{ active: host.name === node.name }" @click="emit('select-host', host.name); showHostMenu = false"><i class="node-status-dot" :class="getNodeStatus(host.status)" />{{ host.name }}</button>
+          <button v-for="host in props.hosts" :key="host.uuid" :class="{ active: host.uuid === node.uuid }" @click="emit('select-host', host.uuid); showHostMenu = false"><i class="node-status-dot" :class="getNodeStatus(host.status)" />{{ host.name }}</button>
         </div>
         </div>
       </div>

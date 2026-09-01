@@ -9,7 +9,7 @@ import { fetchSnapshot } from "./services/komariApi.js";
 import { formatByteRate } from "./utils/format.js";
 
 const isDark = ref(false);
-const siteIcon = ref("◉");
+const faviconUrl = "/favicon.ico";
 const activeGroup = ref("all");
 const selectedNode = ref(null);
 const isLoading = ref(true);
@@ -21,9 +21,10 @@ const errorMessage = ref("");
 let refreshTimer;
 
 function findNodeFromLocation() {
-  const match = window.location.pathname.match(/^\/nodes\/(.+)$/);
+  const match = window.location.pathname.match(/^\/instance\/(.+)$/);
   if (!match) return null;
-  const node = nodes.value.find((item) => encodeURIComponent(item.name) === match[1]);
+  const uuid = decodeURIComponent(match[1]);
+  const node = nodes.value.find((item) => item.uuid === uuid);
   return node || null;
 }
 
@@ -32,7 +33,7 @@ function syncRoute() {
 }
 
 function openNode(node) {
-  window.history.pushState({}, "", `/nodes/${encodeURIComponent(node.name)}`);
+  window.history.pushState({}, "", `/instance/${encodeURIComponent(node.uuid)}`);
   selectedNode.value = node;
 }
 
@@ -51,7 +52,9 @@ function refreshData() {
       overview.value = getOverviewFromNodes(snapshot.nodes);
       selectGroup(activeGroup.value);
       if (selectedNode.value) {
-        selectedNode.value = nodes.value.find((node) => node.name === selectedNode.value.name) || null;
+        selectedNode.value = nodes.value.find((node) => node.uuid === selectedNode.value.uuid) || null;
+      } else {
+        selectedNode.value = findNodeFromLocation();
       }
     })
     .catch((error) => {
@@ -116,7 +119,7 @@ function getOverviewFromNodes(items) {
   <div class="monitor-app" :class="{ 'is-dark': isDark }">
     <header class="header">
       <div class="site-brand">
-        <span class="site-icon" aria-hidden="true">{{ siteIcon }}</span>
+        <img class="site-icon" :src="faviconUrl" alt="" />
         <h1>Shum</h1>
       </div>
       <Toolbar :is-dark="isDark" :is-loading="isLoading" @toggle-theme="isDark = !isDark" @refresh="refreshData" />
@@ -147,7 +150,7 @@ function getOverviewFromNodes(items) {
       :node="selectedNode"
       :hosts="nodes"
       @close="closeDetails"
-      @select-host="openNode(nodes.find((node) => node.name === $event))"
+      @select-host="openNode(nodes.find((node) => node.uuid === $event))"
     />
   </div>
 </template>

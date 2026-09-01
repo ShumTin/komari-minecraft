@@ -1,6 +1,8 @@
 <script setup>
 import { Moon, RefreshCw, Settings, Sun } from "lucide-vue-next";
 
+const adminUrl = __KOMARI_ADMIN_URL__;
+
 defineProps({ isDark: Boolean, isLoading: Boolean });
 defineEmits(["toggle-theme", "refresh"]);
 </script>
@@ -16,6 +18,6 @@ defineEmits(["toggle-theme", "refresh"]);
       <Sun v-if="isDark" :size="18" :stroke-width="1.8" aria-hidden="true" />
       <Moon v-else :size="18" :stroke-width="1.8" aria-hidden="true" />
     </button>
-    <button title="设置" aria-label="设置"><Settings :size="17" :stroke-width="1.8" aria-hidden="true" /></button>
+    <a :href="adminUrl" target="_blank" rel="noopener noreferrer" title="进入后台" aria-label="进入后台"><Settings :size="17" :stroke-width="1.8" aria-hidden="true" /></a>
   </div>
 </template>
