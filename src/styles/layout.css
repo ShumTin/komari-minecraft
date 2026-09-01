@@ -139,3 +139,16 @@ body {
 }
 
 .data-error { color: #c24141; }
+
+.toolbar button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.is-spinning {
+  animation: refresh-spin 0.9s linear infinite;
+}
+
+@keyframes refresh-spin {
+  to { transform: rotate(360deg); }
+}

@@ -7,21 +7,15 @@ import NodeCard from "./components/NodeCard.vue";
 import NodeDetails from "./components/NodeDetails.vue";
 import { fetchSnapshot } from "./services/komariApi.js";
 import { formatByteRate } from "./utils/format.js";
-import {
-  getGroups,
-  getNodes,
-  getNodeDetails,
-  getOverview,
-  refreshMockData,
-} from "./mock/mockService.js";
 
 const isDark = ref(false);
 const siteIcon = ref("◉");
 const activeGroup = ref("all");
 const selectedNode = ref(null);
-const overview = ref(getOverview());
-const groups = ref(getGroups());
-const nodes = ref(getNodes());
+const isLoading = ref(true);
+const overview = ref(getOverviewFromNodes([]));
+const groups = ref([]);
+const nodes = ref([]);
 const filteredNodes = ref(nodes.value);
 const errorMessage = ref("");
 let refreshTimer;
@@ -30,7 +24,7 @@ function findNodeFromLocation() {
   const match = window.location.pathname.match(/^\/nodes\/(.+)$/);
   if (!match) return null;
   const node = nodes.value.find((item) => encodeURIComponent(item.name) === match[1]);
-  return node ? getNodeDetails(node) : null;
+  return node || null;
 }
 
 function syncRoute() {
@@ -39,7 +33,7 @@ function syncRoute() {
 
 function openNode(node) {
   window.history.pushState({}, "", `/nodes/${encodeURIComponent(node.name)}`);
-  selectedNode.value = getNodeDetails(node);
+  selectedNode.value = node;
 }
 
 function closeDetails() {
@@ -48,24 +42,25 @@ function closeDetails() {
 }
 
 function refreshData() {
-  return fetchSnapshot().then((snapshot) => {
-    nodes.value = snapshot.nodes;
-    groups.value = getGroupsFromNodes(snapshot.nodes);
-    overview.value = getOverviewFromNodes(snapshot.nodes);
-    selectGroup(activeGroup.value);
-    if (selectedNode.value) {
-      selectedNode.value = nodes.value.find((node) => node.name === selectedNode.value.name) || null;
-    }
-    errorMessage.value = "";
-  }).catch((error) => {
-    console.error("[Komari API] 数据刷新失败", error);
-    const snapshot = refreshMockData();
-    nodes.value = snapshot.nodes;
-    groups.value = snapshot.groups;
-    overview.value = snapshot.overview;
-    selectGroup(activeGroup.value);
-    errorMessage.value = `数据刷新失败，已使用 mock 数据：${error instanceof Error ? error.message : "未知错误"}`;
-  });
+  isLoading.value = true;
+  errorMessage.value = "";
+  return fetchSnapshot()
+    .then((snapshot) => {
+      nodes.value = snapshot.nodes;
+      groups.value = getGroupsFromNodes(snapshot.nodes);
+      overview.value = getOverviewFromNodes(snapshot.nodes);
+      selectGroup(activeGroup.value);
+      if (selectedNode.value) {
+        selectedNode.value = nodes.value.find((node) => node.name === selectedNode.value.name) || null;
+      }
+    })
+    .catch((error) => {
+      console.error("[Komari API] 数据刷新失败", error);
+      errorMessage.value = `数据刷新失败：${error instanceof Error ? error.message : "未知错误"}`;
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
 }
 
 onMounted(() => {
@@ -124,9 +119,9 @@ function getOverviewFromNodes(items) {
         <span class="site-icon" aria-hidden="true">{{ siteIcon }}</span>
         <h1>Shum</h1>
       </div>
-      <Toolbar :is-dark="isDark" @toggle-theme="isDark = !isDark" @refresh="refreshData" />
+      <Toolbar :is-dark="isDark" :is-loading="isLoading" @toggle-theme="isDark = !isDark" @refresh="refreshData" />
     </header>
-    <main v-if="!selectedNode">
+    <main v-if="!selectedNode" :aria-busy="isLoading">
       <OverviewCards :overview="overview" />
       <p v-if="errorMessage" class="data-error" role="alert">{{ errorMessage }}</p>
       <div class="node-filters">
@@ -144,7 +139,7 @@ function getOverviewFromNodes(items) {
           @select="openNode"
         />
       </section>
-      <p v-if="!errorMessage && filteredNodes.length === 0" class="empty-state">暂无匹配节点</p>
+      <p v-if="!isLoading && !errorMessage && filteredNodes.length === 0" class="empty-state">暂无节点</p>
     </main>
     <button v-if="!selectedNode" class="translate">文</button>
     <NodeDetails

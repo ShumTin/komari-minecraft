@@ -1,13 +1,13 @@
 <script setup>
 import { Moon, RefreshCw, Settings, Sun } from "lucide-vue-next";
 
-defineProps({ isDark: Boolean });
+defineProps({ isDark: Boolean, isLoading: Boolean });
 defineEmits(["toggle-theme", "refresh"]);
 </script>
 
 <template>
   <div class="toolbar">
-    <button title="刷新数据" aria-label="刷新数据" @click="$emit('refresh')"><RefreshCw :size="17" :stroke-width="1.8" aria-hidden="true" /></button>
+    <button title="刷新数据" aria-label="刷新数据" :disabled="isLoading" @click="$emit('refresh')"><RefreshCw :class="{ 'is-spinning': isLoading }" :size="17" :stroke-width="1.8" aria-hidden="true" /></button>
     <button
       :title="isDark ? '切换为浅色' : '切换为深色'"
       :aria-label="isDark ? '切换为浅色' : '切换为深色'"
