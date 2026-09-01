@@ -215,6 +215,12 @@
   font-weight: 600;
 }
 
+.metric-label b.metric-value-traffic {
+  color: #1677ff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .metric small {
   display: block;
   min-height: 14px;

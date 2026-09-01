@@ -49,6 +49,9 @@
 .monitor-app.is-dark .metric-label b {
   color: #d1d7e0;
 }
+.monitor-app.is-dark .metric-label b.metric-value-traffic {
+  color: #83b5ff;
+}
 .monitor-app.is-dark .overview-card .overview-icon {
   border-color: #3e6668;
   background: #294648;

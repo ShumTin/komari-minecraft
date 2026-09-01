@@ -97,7 +97,7 @@ function getOverviewFromNodes(items) {
   const currency = items[0]?.currency || "¥";
   const uploadRate = formatByteRate(speedUp, "B/s");
   const downloadRate = formatByteRate(speedDown, "B/s");
-  const totalRate = formatByteRate(speedUp, "B/s");
+  const totalRate = formatByteRate(speedUp + speedDown, "B/s");
   return {
     online: { current: online, total: items.length, rate: items.length ? `${((online / items.length) * 100).toFixed(2)}%` : "0%" },
     assets: { value: `${currency}${assets.toFixed(2)}`, forecast: "按节点价格汇总" },
