@@ -27,6 +27,9 @@ export default defineConfig(({ command, mode }) => {
                 proxy.on("proxyReq", (proxyReq) => {
                   proxyReq.setHeader("Origin", komariUrl);
                 });
+                proxy.on("proxyReqWs", (proxyReq) => {
+                  proxyReq.setHeader("Origin", komariUrl);
+                });
               },
             },
             "/favicon.ico": {

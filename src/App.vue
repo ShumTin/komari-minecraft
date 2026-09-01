@@ -5,7 +5,8 @@ import OverviewCards from "./components/OverviewCards.vue";
 import GroupFilter from "./components/GroupFilter.vue";
 import NodeCard from "./components/NodeCard.vue";
 import NodeDetails from "./components/NodeDetails.vue";
-import { fetchSnapshot } from "./services/komariApi.js";
+import { fetchLatestStats, fetchSnapshot, supportsBatchLatestStats, updateNodeRealtime } from "./services/komariApi.js";
+import { getRpcTransportState } from "./services/rpc.js";
 import { formatByteRate } from "./utils/format.js";
 
 const isDark = ref(false);
@@ -19,6 +20,11 @@ const nodes = ref([]);
 const filteredNodes = ref(nodes.value);
 const errorMessage = ref("");
 let refreshTimer;
+let refreshInFlight = false;
+let refreshStopped = false;
+let realtimeTimer;
+let realtimeInFlight = false;
+let lastHttpFallbackAt = 0;
 
 function findNodeFromLocation() {
   const match = window.location.pathname.match(/^\/instance\/(.+)$/);
@@ -43,6 +49,8 @@ function closeDetails() {
 }
 
 function refreshData() {
+  if (refreshInFlight) return Promise.resolve();
+  refreshInFlight = true;
   isLoading.value = true;
   errorMessage.value = "";
   return fetchSnapshot()
@@ -63,18 +71,46 @@ function refreshData() {
     })
     .finally(() => {
       isLoading.value = false;
+      refreshInFlight = false;
+      if (!refreshStopped) {
+        refreshTimer = window.setTimeout(refreshData, 30000);
+      }
     });
+}
+
+async function refreshRealtimeData() {
+  if (refreshStopped || realtimeInFlight || !nodes.value.length || !supportsBatchLatestStats()) return;
+  const transport = getRpcTransportState();
+  if (transport !== "websocket" && Date.now() - lastHttpFallbackAt < 15000) return;
+  realtimeInFlight = true;
+  try {
+    const latest = await fetchLatestStats(nodes.value.map((node) => node.uuid));
+    if (getRpcTransportState() !== "websocket") lastHttpFallbackAt = Date.now();
+    nodes.value = await Promise.all(nodes.value.map((node) => updateNodeRealtime(node, latest.get(node.uuid) || [])));
+    overview.value = getOverviewFromNodes(nodes.value);
+    selectGroup(activeGroup.value);
+    if (selectedNode.value) {
+      selectedNode.value = nodes.value.find((node) => node.uuid === selectedNode.value.uuid) || null;
+    }
+  } catch (error) {
+    console.warn("[Komari API] 实时状态刷新失败", error);
+  } finally {
+    realtimeInFlight = false;
+  }
 }
 
 onMounted(() => {
   syncRoute();
   window.addEventListener("popstate", syncRoute);
+  refreshStopped = false;
   refreshData();
-  refreshTimer = window.setInterval(refreshData, 15000);
+  realtimeTimer = window.setInterval(refreshRealtimeData, 2000);
 });
 onBeforeUnmount(() => {
+  refreshStopped = true;
   window.removeEventListener("popstate", syncRoute);
-  window.clearInterval(refreshTimer);
+  window.clearTimeout(refreshTimer);
+  window.clearInterval(realtimeTimer);
 });
 
 function selectGroup(group) {
@@ -124,7 +160,16 @@ function getOverviewFromNodes(items) {
       </div>
       <Toolbar :is-dark="isDark" :is-loading="isLoading" @toggle-theme="isDark = !isDark" @refresh="refreshData" />
     </header>
-    <main v-if="!selectedNode" :aria-busy="isLoading">
+    <section
+      v-if="!selectedNode && isLoading && nodes.length === 0"
+      class="details-loading"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <span class="loading-spinner" aria-hidden="true" />
+      <p>加载节点...</p>
+    </section>
+    <main v-else-if="!selectedNode" :aria-busy="isLoading">
       <OverviewCards :overview="overview" />
       <p v-if="errorMessage" class="data-error" role="alert">{{ errorMessage }}</p>
       <div class="node-filters">

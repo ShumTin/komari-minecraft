@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { fetchSnapshot } from "../src/services/komariApi.js";
+import { fetchNodePingData, fetchSnapshot } from "../src/services/komariApi.js";
+import { fetchNodeHistory } from "../src/services/nodeHistory.js";
 
 const nodeUuid = "node-1";
 
@@ -33,12 +34,59 @@ test("Komari 响应应完整映射为节点卡片数据", async (context) => {
   assert.equal(node.diskText, "5.00 GB / 20.00 GB");
   assert.equal(node.up, "2048");
   assert.equal(node.down, "4096");
+  assert.equal(node.peakUp, 8192);
+  assert.equal(node.peakDown, 16384);
+  assert.equal(node.kernelVersion, "6.12.8+deb13-amd64");
+  assert.equal(node.gpuName, "Virtio GPU");
+  assert.equal(node.uptimeText, "2 天");
+  assert.equal(node.connectionCount, 96);
+  assert.equal(node.processCount, 187);
   assert.equal(node.trafficUpBytes, 30 * 1024 ** 3);
   assert.equal(node.trafficDownBytes, 20 * 1024 ** 3);
   assert.equal(node.pingLines.length, 1);
   assert.equal(node.pingLines[0].value, 42);
   assert.equal(node.pingLines[0].loss, 2.5);
   assert.deepEqual(node.pingLines[0].samples.map((sample) => sample.value), [55, 42]);
+});
+
+test("Ping 数据应在详情页按需加载并映射", async (context) => {
+  context.after(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (_url, options) => {
+    const request = JSON.parse(options.body);
+    const result = getRpcResult(request.method);
+    return { ok: true, json: async () => ({ jsonrpc: "2.0", id: request.id, result }) };
+  };
+
+  const lines = await fetchNodePingData(nodeUuid);
+  assert.equal(lines.length, 1);
+  assert.equal(lines[0].value, 42);
+  assert.equal(lines[0].loss, 2.5);
+  assert.deepEqual(lines[0].samples.map((sample) => sample.value), [55, 42]);
+});
+
+test("历史数据服务应读取统一 records 结构", async (context) => {
+  context.after(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (_url, options) => {
+    const request = JSON.parse(options.body);
+    const result = request.method === "public:getRecordsByUUID"
+      ? { records: [{ time: "2026-09-01T01:00:00Z", cpu: 12.5 }] }
+      : undefined;
+    return {
+      ok: true,
+      json: async () => ({ jsonrpc: "2.0", id: request.id, result }),
+    };
+  };
+
+  const records = await fetchNodeHistory(nodeUuid, 1);
+  assert.deepEqual(records, [{ time: "2026-09-01T01:00:00Z", cpu: 12.5 }]);
 });
 
 function getRpcResult(method) {
@@ -50,6 +98,10 @@ function getRpcResult(method) {
         region: "🇺🇸",
         group: "",
         os: "Debian GNU/Linux 13",
+        kernel_version: "6.12.8+deb13-amd64",
+        arch: "amd64",
+        virtualization: "kvm",
+        gpu_name: "Virtio GPU",
         cpu_cores: 2,
         mem_total: 1024 ** 3,
         disk_total: 20 * 1024 ** 3,
@@ -62,6 +114,10 @@ function getRpcResult(method) {
     ],
     "public:getClientRecentRecords": [
       {
+        network: { up: 8192, down: 16384 },
+        updated_at: "2026-09-01T01:36:52Z",
+      },
+      {
         cpu: { usage: 12.5 },
         ram: { used: 256 * 1024 ** 2 },
         disk: { used: 5 * 1024 ** 3 },
@@ -72,6 +128,8 @@ function getRpcResult(method) {
           totalDown: 20 * 1024 ** 3,
         },
         uptime: 172800,
+        connections: { tcp: 95, udp: 1 },
+        process: 187,
         updated_at: "2026-09-01T01:37:52Z",
       },
     ],
