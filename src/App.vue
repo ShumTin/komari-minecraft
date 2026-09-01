@@ -5,6 +5,8 @@ import OverviewCards from "./components/OverviewCards.vue";
 import GroupFilter from "./components/GroupFilter.vue";
 import NodeCard from "./components/NodeCard.vue";
 import NodeDetails from "./components/NodeDetails.vue";
+import { fetchSnapshot } from "./services/komariApi.js";
+import { formatByteRate } from "./utils/format.js";
 import {
   getGroups,
   getNodes,
@@ -46,24 +48,30 @@ function closeDetails() {
 }
 
 function refreshData() {
-  try {
-    const snapshot = refreshMockData();
+  return fetchSnapshot().then((snapshot) => {
     nodes.value = snapshot.nodes;
-    groups.value = snapshot.groups;
-    overview.value = snapshot.overview;
+    groups.value = getGroupsFromNodes(snapshot.nodes);
+    overview.value = getOverviewFromNodes(snapshot.nodes);
     selectGroup(activeGroup.value);
     if (selectedNode.value) {
       selectedNode.value = nodes.value.find((node) => node.name === selectedNode.value.name) || null;
     }
     errorMessage.value = "";
-  } catch (error) {
-    errorMessage.value = "数据刷新失败，请稍后重试。";
-  }
+  }).catch((error) => {
+    console.error("[Komari API] 数据刷新失败", error);
+    const snapshot = refreshMockData();
+    nodes.value = snapshot.nodes;
+    groups.value = snapshot.groups;
+    overview.value = snapshot.overview;
+    selectGroup(activeGroup.value);
+    errorMessage.value = `数据刷新失败，已使用 mock 数据：${error instanceof Error ? error.message : "未知错误"}`;
+  });
 }
 
 onMounted(() => {
   syncRoute();
   window.addEventListener("popstate", syncRoute);
+  refreshData();
   refreshTimer = window.setInterval(refreshData, 15000);
 });
 onBeforeUnmount(() => {
@@ -75,6 +83,37 @@ function selectGroup(group) {
   activeGroup.value = group;
   filteredNodes.value =
     group === "all" ? nodes.value : nodes.value.filter((node) => node.group === group);
+}
+
+function getGroupsFromNodes(items) {
+  const counts = new Map();
+  items.forEach((node) => counts.set(node.group, (counts.get(node.group) || 0) + 1));
+  return [...counts].map(([code, count]) => ({ code, count }));
+}
+
+function getOverviewFromNodes(items) {
+  const online = items.filter((node) => node.status === "online").length;
+  const trafficUp = items.reduce((sum, node) => sum + (node.trafficUpBytes || 0), 0);
+  const trafficDown = items.reduce((sum, node) => sum + (node.trafficDownBytes || 0), 0);
+  const speedUp = items.reduce((sum, node) => sum + (Number(node.up) || 0), 0);
+  const speedDown = items.reduce((sum, node) => sum + (Number(node.down) || 0), 0);
+  const toGb = (bytes) => (bytes / 1024 ** 3).toFixed(2);
+  const assets = items.reduce((sum, node) => sum + (node.price || 0), 0);
+  const currency = items[0]?.currency || "¥";
+  const uploadRate = formatByteRate(speedUp, "B/s");
+  const downloadRate = formatByteRate(speedDown, "B/s");
+  const totalRate = formatByteRate(speedUp, "B/s");
+  return {
+    online: { current: online, total: items.length, rate: items.length ? `${((online / items.length) * 100).toFixed(2)}%` : "0%" },
+    assets: { value: `${currency}${assets.toFixed(2)}`, forecast: "按节点价格汇总" },
+    traffic: { today: toGb(trafficUp + trafficDown), unit: "GB", upload: `${toGb(trafficUp)} GB`, download: `${toGb(trafficDown)} GB` },
+    bandwidth: {
+      value: totalRate.value,
+      unit: totalRate.unit,
+      upload: `${uploadRate.value} ${uploadRate.unit}`,
+      download: `${downloadRate.value} ${downloadRate.unit}`,
+    },
+  };
 }
 </script>
 

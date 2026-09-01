@@ -1,6 +1,7 @@
 .node-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* 参考主题 Junimo：固定列数并保留卡片最小宽度，避免最后一行被拉伸。 */
+  grid-template-columns: repeat(4, minmax(260px, 1fr));
   gap: 12px;
   padding-top: 18px;
 }
@@ -87,6 +88,7 @@
 }
 
 .node-title h2 {
+  min-width: 0;
   overflow: hidden;
   margin: 0;
   text-overflow: ellipsis;
@@ -207,6 +209,7 @@
 }
 
 .metric-label b {
+  white-space: nowrap;
   color: #292c32;
   font-size: 13px;
   font-weight: 600;
@@ -218,6 +221,9 @@
   margin-top: 5px;
   color: #858a93;
   font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .metric > i,
 .traffic > i,
@@ -283,6 +289,7 @@
 }
 
 .traffic > div b {
+  white-space: nowrap;
   color: #46a56d;
   font-size: 13px;
 }
@@ -312,6 +319,7 @@
 }
 
 .io-grid b {
+  white-space: nowrap;
   color: #6a7079;
   font-size: 12px;
   font-weight: 500;
@@ -386,6 +394,10 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .line-name > i {
@@ -397,10 +409,16 @@
 .signal-bars {
   grid-column: 1 / -1;
   display: flex;
-  gap: 2px;
+  gap: 0;
   height: 10px;
   margin-top: 2px;
   overflow: visible;
+}
+
+/* .latency-grid span 的通用布局间距不能作用到信号条内部。 */
+.latency-grid .signal-bars {
+  display: flex;
+  gap: 1px;
 }
 
 .signal-bars > i {
@@ -408,7 +426,7 @@
   flex: 1;
   min-width: 0;
   height: 10px;
-  border-radius: 999px;
+  border-radius: 2px;
   background: #54c889;
   cursor: pointer;
   transition: transform 120ms ease;
@@ -455,7 +473,7 @@
 
 .signal-bars > i:hover {
   z-index: 2;
-  transform: scale(1.18, 1.45);
+  transform: scale(1.08, 1.25);
 }
 
 .signal-bars > i:hover::after {
@@ -471,11 +489,16 @@
   border-top-color: #eef3f5;
 }
 
-.signal-bars > i.deep-green { background: #08a875; }
-.signal-bars > i.light-green { background: #8bd45d; }
-.signal-bars > i.yellow { background: #f3c64d; }
-.signal-bars > i.red { background: #f06462; }
+.signal-bars > i.deep-green { background: #00ad46; }
+.signal-bars > i.green { background: #08d66a; }
+.signal-bars > i.light-green { background: #8bea63; }
+.signal-bars > i.yellow { background: #f1e84b; }
+.signal-bars > i.orange { background: #ff9838; }
+.signal-bars > i.red { background: #ed1232; }
 .signal-bars > i.packet-ok { background: #08a875; }
+.signal-bars > i.packet-light { background: #8bd45d; }
+.signal-bars > i.packet-yellow { background: #f3c64d; }
+.signal-bars > i.packet-orange { background: #f3a13f; }
 .signal-bars > i.packet-loss { background: #f06462; }
 
 .monitor-app.is-dark .latency-panel h3,

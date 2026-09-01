@@ -10,36 +10,51 @@ import { formatByteRate } from "../utils/format.js";
 defineProps({ node: { type: Object, required: true } });
 defineEmits(["select"]);
 
-const latencyLines = [
-  { name: "Apple", value: "11 ms", samples: [42, 48, 55, 63, 72, 88, 110, 138, 155, 180, 205, 280, 320, 44, 58, 90, 160, 240, 310, 420] },
-  { name: "DNS-1", value: "4 ms", samples: [4, 7, 9, 12, 18, 22, 28, 35, 42, 48, 55, 61, 72, 80, 92, 105, 118, 130, 145, 4] },
-  { name: "DNS-2", value: "11 ms", samples: [11, 18, 25, 36, 48, 55, 64, 72, 85, 98, 120, 145, 152, 168, 190, 210, 245, 290, 305, 11] },
-];
-
-const packetLines = [
-  { name: "Apple", value: "0.0%" },
-  { name: "DNS-1", value: "0.0%" },
-  { name: "DNS-2", value: "0.0%" },
-];
-
 function latencyTone(value) {
-  if (value < 60) return "deep-green";
-  if (value < 150) return "light-green";
-  if (value < 300) return "yellow";
-  return "red";
+  if (value < 0) return "red";
+  if (value <= 50) return "deep-green";
+  if (value <= 100) return "green";
+  if (value <= 200) return "light-green";
+  if (value <= 250) return "yellow";
+  return "orange";
 }
 
-function packetTone(packetLoss) {
-  return Number.parseFloat(packetLoss) > 0 ? "packet-loss" : "packet-ok";
+function packetTone(loss) {
+  if (loss <= 1) return "packet-ok";
+  if (loss <= 3) return "packet-light";
+  if (loss <= 6) return "packet-yellow";
+  if (loss <= 9) return "packet-orange";
+  return "packet-loss";
 }
 
-function getPacketLoss(node) {
-  return node.packetLoss || (node.status === "warning" ? "1.2%" : "0.0%");
+function sampleTime(value) {
+  if (!value) return "--:--";
+  return new Date(value).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false });
 }
 
-function sampleTime(index) {
-  const minute = (51 - (19 - index) + 60) % 60;
-  return `13:${String(minute).padStart(2, "0")}`;
+function getCost(node) {
+  if (Number.isFinite(Number(node.price)) && Number(node.price) > 0) {
+    const cycle = Number(node.billingCycle) === 30 ? "月" : "年";
+    return `${node.currency || "$"}${Number(node.price).toFixed(2)}/${cycle}`;
+  }
+  return node.name.startsWith("Tokyo") ? "$5.00/月" : "$49.99/年";
+}
+
+function formatTraffic(value, fallback) {
+  if (!Number.isFinite(value) || value <= 0) return fallback;
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  const index = Math.min(Math.floor(Math.log(value) / Math.log(1024)), units.length - 1);
+  return `${(value / 1024 ** index).toFixed(index > 2 ? 1 : 0)} ${units[index]}`;
+}
+
+function getTrafficText(node) {
+  const total = (node.trafficUpBytes || 0) + (node.trafficDownBytes || 0);
+  const limit = node.trafficLimitBytes || 0;
+  if (!total && !limit) return { value: "--", detail: "--" };
+  return {
+    value: formatTraffic(total, "0 GB"),
+    detail: `${formatTraffic(total, "0 GB")} / ${formatTraffic(limit, "不限")}`,
+  };
 }
 </script>
 
@@ -72,14 +87,14 @@ function sampleTime(index) {
       <span><AppIcon name="clock" /> 到期 <b class="expire">{{ node.expires }}</b></span>
       <span
         ><AppIcon name="wallet" />
-        <b class="cost">${{ node.name.startsWith("Tokyo") ? "5/月" : "49.99/年" }}</b></span
+        <b class="cost">{{ getCost(node) }}</b></span
       >
     </div>
     <div class="metric-grid">
       <NodeMetric
         label="CPU"
         :value="node.cpu + '%'"
-        detail="2 核"
+        :detail="`${node.cores || 0} 核`"
         :percent="node.cpu"
         tone="blue"
       /><NodeMetric
@@ -96,8 +111,8 @@ function sampleTime(index) {
         tone="orange"
       /><NodeMetric
         label="流量"
-        value="979 GB"
-        detail="20.9 GB / 1000 GB"
+        :value="getTrafficText(node).value"
+        :detail="getTrafficText(node).detail"
         percent="3"
         tone="green"
       />
@@ -128,17 +143,19 @@ function sampleTime(index) {
     <div class="latency-grid">
       <div class="latency-panel">
         <h3>延迟</h3>
-        <div v-for="line in latencyLines" :key="line.name" class="latency-row">
-          <span class="line-name">{{ line.name }}</span><b>{{ line.value }}</b>
-          <span class="signal-bars"><i v-for="(sample, index) in line.samples" :key="index" :class="latencyTone(sample)" :data-tooltip="`${sampleTime(index)}\n${sample} ms`" /></span>
+        <div v-for="line in node.pingLines || []" :key="line.id" class="latency-row">
+          <span class="line-name">{{ line.name }}</span><b>{{ Number.isFinite(line.value) ? `${line.value.toFixed(0)} ms` : "--" }}</b>
+          <span class="signal-bars"><i v-for="(sample, index) in line.samples" :key="index" :class="latencyTone(sample.value)" :data-tooltip="`${sampleTime(sample.time)}\n${sample.value >= 0 ? `${sample.value} ms` : '超时'}`" /></span>
         </div>
+        <span v-if="!node.pingLines?.length" class="line-name">暂无监测</span>
       </div>
       <div class="latency-panel">
         <h3>丢包</h3>
-        <div v-for="line in packetLines" :key="line.name" class="latency-row">
-          <span class="line-name">{{ line.name }}</span><b>{{ getPacketLoss(node) }}</b>
-          <span class="signal-bars"><i v-for="segment in 20" :key="segment" :class="packetTone(getPacketLoss(node))" :data-tooltip="`${sampleTime(segment - 1)}\n${getPacketLoss(node)}`" /></span>
+        <div v-for="line in node.pingLines || []" :key="line.id" class="latency-row">
+          <span class="line-name">{{ line.name }}</span><b>{{ line.loss.toFixed(1) }}%</b>
+          <span class="signal-bars"><i v-for="(sample, index) in line.samples" :key="index" :class="sample.value < 0 ? 'packet-loss' : packetTone(line.loss)" :data-tooltip="`${sampleTime(sample.time)}\n${sample.value < 0 ? '丢包' : `${line.loss.toFixed(1)}%`}`" /></span>
         </div>
+        <span v-if="!node.pingLines?.length" class="line-name">暂无监测</span>
       </div>
     </div>
   </article>

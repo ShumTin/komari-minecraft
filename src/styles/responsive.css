@@ -17,11 +17,57 @@
     height: 31px;
   }
 
+  .node-card {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 1100px) {
   .node-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
   }
 
   .node-card {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+@media (max-width: 580px) {
+  .node-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) and (min-width: 581px) {
+  .node-grid {
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .metric small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .metric-label b,
+  .traffic > div b,
+  .io-grid b {
+    white-space: nowrap;
+  }
+
+  .node-meta {
+    gap: 5px;
+  }
+
+  .node-meta span {
     min-width: 0;
+  }
+
+  .node-meta b {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
