@@ -38,7 +38,9 @@ export async function fetchLatestStats(uuids) {
 
 export async function updateNodeRealtime(node, records) {
   const stats = records[records.length - 1];
-  if (!stats) return { ...node, status: "offline", online: "离线" };
+  if (!stats) return node.latestStats == null && node.status === "offline" ? node : { ...node, status: "offline", online: "离线" };
+  // 与 Junimo 的 Store 一样，最新样本未变化时保持对象引用，避免无意义的页面更新。
+  if (stats.updated_at && node.latestStats?.updated_at === stats.updated_at) return node;
   const memoryUsed = Number(stats.ram?.used) || 0;
   const memoryTotal = Number(stats.ram?.total) || 0;
   const diskUsed = Number(stats.disk?.used) || 0;
@@ -47,6 +49,7 @@ export async function updateNodeRealtime(node, records) {
   const udpConnections = optionalNumber(stats.connections?.udp);
   return {
     ...node,
+    latestStats: stats,
     cpu: fixed(stats.cpu?.usage),
     memory: fixed(memoryTotal ? (memoryUsed / memoryTotal) * 100 : 0),
     memoryText: `${formatBytes(memoryUsed)} / ${formatBytes(memoryTotal)}`,
@@ -89,24 +92,33 @@ async function fetchPingTasksUncached(options) {
 export async function fetchPingRecords(uuid, hours = 1, options = {}) {
   const key = `${uuid}:${hours}`;
   const cached = pingRecordsCache.get(key);
-  if (!options.signal && cached && cached.expiresAt > Date.now()) return cached.value;
-  const result = await callRpc("public:getPingRecords", { uuid, hours: String(hours) }, options);
-  const value = Array.isArray(result?.records) ? result.records : [];
-  if (!options.signal) pingRecordsCache.set(key, { value, expiresAt: Date.now() + 30 * 1000 });
+  if (cached && cached.expiresAt > Date.now()) return cached.value;
+  let value;
+  try {
+    // 与 Junimo 一致，优先使用数字 hours 的通用记录接口，避免旧 public 接口退化到 1 小时默认值。
+    const result = await callRpc("common:getRecords", { uuid, hours, type: "ping", maxCount: Math.min(2000, Math.max(60, hours * 60)) }, options);
+    value = Array.isArray(result?.records) ? result.records : Array.isArray(result) ? result : null;
+    if (!value) throw new Error("通用 Ping 记录响应格式无效");
+  } catch (error) {
+    if (error?.name === "AbortError") throw error;
+    const result = await callRpc("public:getPingRecords", { uuid, hours }, options);
+    value = Array.isArray(result?.records) ? result.records : [];
+  }
+  pingRecordsCache.set(key, { value, expiresAt: Date.now() + 30 * 1000 });
   return value;
 }
 
 export async function fetchPingStats(uuid, hours = 1, options = {}) {
   const key = `${uuid}:${hours}`;
   const cached = pingStatsCache.get(key);
-  if (!options.signal && cached && cached.expiresAt > Date.now()) return cached.value;
+  if (cached && cached.expiresAt > Date.now()) return cached.value;
   const result = await callRpc("public:getPingMetricStats", {
     entity_id: uuid,
     hours,
     max_points: 100,
   }, options);
   const value = Array.isArray(result?.stats) ? result.stats : [];
-  if (!options.signal) pingStatsCache.set(key, { value, expiresAt: Date.now() + 30 * 1000 });
+  pingStatsCache.set(key, { value, expiresAt: Date.now() + 30 * 1000 });
   return value;
 }
 
@@ -233,6 +245,7 @@ function toNodeModel(node, records, pingLines = []) {
     expires: formatExpiry(node.expired_at),
     status: online ? "online" : "offline",
     uuid: node.uuid,
+    latestStats: stats || null,
     updatedAt: stats?.updated_at ? new Date(stats.updated_at).toLocaleTimeString("zh-CN", { hour12: false }) : "--:--:--",
   };
 }
@@ -259,9 +272,9 @@ function createPingLines(uuid, tasks, records, stats) {
     .map((task) => {
       const taskRecords = records
         .filter((record) => String(record.task_id) === String(task.id))
-        .slice(0, 20)
-        .reverse()
         .map((record) => ({ value: Number(record.value), time: record.time }));
+      taskRecords.sort((left, right) => Date.parse(left.time) - Date.parse(right.time));
+      const recentTaskRecords = taskRecords.slice(-200);
       const stat = statsByTask.get(String(task.id));
       const latestValid = [...taskRecords].reverse().find((sample) => sample.value >= 0)?.value;
       return {
@@ -269,7 +282,7 @@ function createPingLines(uuid, tasks, records, stats) {
         name: task.name,
         value: Number(stat?.latest ?? latestValid),
         loss: Number(stat?.loss) || 0,
-        samples: taskRecords,
+        samples: recentTaskRecords,
       };
     });
 }

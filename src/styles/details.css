@@ -182,13 +182,10 @@
   font-size: 10px;
 }
 
-.details-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
 .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.uplot-chart-host { min-width: 0; height: 170px; margin-top: 12px; }
+.uplot-chart-host .uplot { width: 100%; height: 100%; }
+.uplot-chart-host .uplot.chart-reveal-once { animation: chart-reveal 0.7s ease-out; }
 .chart-loading { display: flex; min-height: 220px; align-items: center; justify-content: center; flex-direction: column; gap: 13px; grid-column: 1 / -1; color: #7d8791; font-size: 13px; }
 .chart-loading p { margin: 0; }
 .chart-toolbar { display: flex; justify-content: space-between; margin-bottom: 12px; }
@@ -197,42 +194,31 @@
 .chart-switch button.active { background: #087f78; color: #fff; box-shadow: 0 2px 5px #087f7833; }
 .chart-card { position: relative; min-height: 220px; overflow: hidden; padding: 17px 16px 12px; border: 1px solid #e0e7ee; border-radius: 8px; background: #f8fbfd; }
 .chart-card strong { color: #17222d; font-size: 14px; }
+.chart-card-title { display: inline-flex; align-items: center; gap: 6px; }
+.chart-card-title .app-icon { color: #5878d8; }
+.chart-card:nth-child(2) .chart-card-title .app-icon { color: #aa49ed; }
+.chart-card:nth-child(3) .chart-card-title .app-icon { color: #ef7628; }
+.chart-card:nth-child(4) .chart-card-title .app-icon { color: #17a987; }
+.chart-tooltip { position: absolute; z-index: 3; min-width: 130px; padding: 8px 10px; border: 1px solid #cdd8e5; border-radius: 8px; background: #fff; box-shadow: 0 5px 14px #24345d2b; color: #596979; font-size: 10px; pointer-events: none; animation: chart-tooltip-enter 140ms ease-out; }
+.chart-tooltip strong { display: block; margin-bottom: 5px; color: #687789; font-size: 10px; font-weight: 600; }
+.chart-tooltip span { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.chart-tooltip i { width: 7px; height: 7px; border-radius: 50%; background: #c2546d; }
+.chart-tooltip i.memory { background: #20a9b0; }
+.chart-tooltip i.disk { background: #e28d36; }
+.chart-tooltip i.network { background: #4b75ed; }
+.chart-tooltip b { margin-left: auto; color: #26313c; font-weight: 700; }
+@keyframes chart-tooltip-enter {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes chart-reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chart-card, .chart-tooltip, .uplot-chart-host .uplot { animation: none; }
+}
 .chart-card > b { float: right; color: #657482; font-size: 11px; font-weight: 500; }
-.chart-card svg { position: absolute; right: 16px; bottom: 16px; left: 16px; width: calc(100% - 32px); height: 145px; background: repeating-linear-gradient(0deg, transparent 0 35px, #dce5eb 36px 37px), repeating-linear-gradient(90deg, transparent 0 74px, #dce5eb 75px 76px); }
-.chart-line { fill: none; stroke-width: 2; }
-.chart-line.cpu { stroke: #c2546d; }
-.chart-line.memory { stroke: #20a9b0; }
-.chart-line.disk { stroke: #e28d36; }
-.chart-line.network { stroke: #4b75ed; }
-.chart-area.memory { fill: #73cfd233; }
-.chart-area.network { fill: #55c8aa33; }
-
-.details-grid > div {
-  min-height: 106px;
-  padding: 16px;
-  border: 1px solid #eceef1;
-  border-radius: 9px;
-  background: #fbfcff;
-  transition: border-color 160ms ease, transform 160ms ease;
-}
-
-.details-grid > div:hover {
-  border-color: #c4d2f3;
-  transform: translateY(-1px);
-}
-.details-grid span,
-.details-grid small {
-  display: block;
-  color: #7a818d;
-  font-size: 10px;
-}
-
-.details-grid b {
-  display: block;
-  margin: 7px 0 4px;
-  color: #252a31;
-  font-size: 18px;
-}
 
 .details-section {
   margin-top: 28px;
@@ -274,16 +260,20 @@
 .latency-legend { display: flex; flex-wrap: wrap; gap: 14px 24px; padding-bottom: 14px; border-bottom: 1px solid #eceef1; color: #697581; font-size: 11px; }
 .latency-empty { padding: 28px 0; color: #8b96a2; font-size: 12px; text-align: center; }
 .latency-card { margin-top: 0; padding-top: 0; border-top: 0; }
-.latency-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.latency-legend span, .latency-legend button { display: inline-flex; align-items: center; gap: 5px; }
+.latency-legend button { border: 0; padding: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.latency-legend button.muted { opacity: .42; }
+.latency-legend .ping-series-show-all { color: #087f78; }
 .latency-legend i { width: 7px; height: 7px; border-radius: 50%; background: #4775da; }
 .latency-legend i.green { background: #18b28e; }
 .latency-legend i.orange { background: #f3a12d; }
 .latency-legend b { color: #303a45; font-weight: 600; }
-.latency-chart { display: block; width: 100%; height: 230px; margin-top: 14px; background: repeating-linear-gradient(0deg, transparent 0 45px, #e4e9ee 46px 47px), repeating-linear-gradient(90deg, transparent 0 112px, #e4e9ee 113px 114px); }
-.latency-line { fill: none; stroke-width: 2; }
-.latency-line.blue { stroke: #4775da; }
-.latency-line.green { stroke: #18b28e; }
-.latency-line.orange { stroke: #f3a12d; }
+.ping-chart-wrap { position: relative; min-width: 0; margin-top: 14px; }
+.ping-uplot-host { width: 100%; height: 230px; min-width: 0; }
+.ping-uplot-host .uplot { width: 100%; height: 100%; }
+.ping-uplot-host .uplot { animation: chart-reveal 0.7s ease-out; }
+.ping-chart-tooltip { top: 50px; }
+.ping-chart-tooltip span + span { margin-top: 4px; }
 
 .detail-row {
   padding: 8px 0;
@@ -294,12 +284,13 @@
   background: #262c36;
   color: #d1d7e0;
 }
-.monitor-app.is-dark .details-hero,
+.monitor-app.is-dark .details-hero { border-color: transparent; background: transparent; box-shadow: none; }
 .monitor-app.is-dark .info-panel { border-color: #3d444d; background: #252d37; }
 .monitor-app.is-dark .host-menu-trigger { border-color: transparent; background: transparent; color: #e3e8ef; }
 .monitor-app.is-dark .host-menu-trigger:hover,
 .monitor-app.is-dark .host-menu-trigger:focus-visible { border-color: #3d444d; background: #252d37; }
 .monitor-app.is-dark .host-menu { border-color: #3d444d; background: #252d37; color: #e3e8ef; }
+.monitor-app.is-dark .host-menu button { color: #b7c9dc; }
 .monitor-app.is-dark .host-menu button:hover,
 .monitor-app.is-dark .host-menu button.active { background: #303b58; color: #e3e8ef; }
 .monitor-app.is-dark .chart-switch,
@@ -309,6 +300,8 @@
 .monitor-app.is-dark .info-panel h2,
 .monitor-app.is-dark .info-items b { color: #e3e8ef; }
 .monitor-app.is-dark .info-items > div { border-color: #3d444d; }
+.monitor-app.is-dark .info-items::after,
+.monitor-app.is-dark .latency-legend { border-color: #304255; }
 .monitor-app.is-dark .details-title > span {
   background: #303c59;
 }
@@ -323,12 +316,6 @@
 }
 .monitor-app.is-dark .latency-legend { border-color: #3d444d; }
 .monitor-app.is-dark .latency-legend b { color: #d1d7e0; }
-.monitor-app.is-dark .latency-chart { background: repeating-linear-gradient(0deg, transparent 0 45px, #303943 46px 47px), repeating-linear-gradient(90deg, transparent 0 112px, #303943 113px 114px); }
-
-.monitor-app.is-dark .details-grid > div {
-  border-color: #3d444d;
-  background: #212830;
-}
 
 @media (max-width: 720px) {
   .details-page { padding: 12px 0 32px; }
@@ -340,11 +327,9 @@
   .details-title h2 { font-size: 18px; }
   .details-status { align-items: flex-start; flex-wrap: wrap; gap: 6px; }
   .details-status span { width: 100%; margin-left: 15px; }
-  .details-grid { grid-template-columns: 1fr; }
   .chart-grid { grid-template-columns: 1fr; }
   .info-items b { font-size: 13px; }
 }
-.monitor-app.is-dark .details-grid b,
 .monitor-app.is-dark .ping-list b,
 .monitor-app.is-dark .detail-row b {
   color: #d1d7e0;

@@ -7,11 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test"
+    "test": "node --test",
+    "verify": "npm test && npm run build && git diff --check"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "latest",
     "lucide-vue-next": "^0.577.0",
+    "uplot": "^1.6.32",
     "vite": "latest",
     "vue": "latest"
   }

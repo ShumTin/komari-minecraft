@@ -6,25 +6,36 @@ import { getNodeStatus, getNodeStatusLabel } from "../utils/nodeStatus.js";
 import { formatByteRate } from "../utils/format.js";
 import { fetchNodeHistory } from "../services/nodeHistory.js";
 import { fetchNodePingData } from "../services/komariApi.js";
+import LoadCharts from "./LoadCharts.vue";
+import PingCharts from "./PingCharts.vue";
 
 const props = defineProps({
   node: { type: Object, required: true },
   hosts: { type: Array, default: () => [] },
+  isDark: { type: Boolean, default: false },
 });
 const emit = defineEmits(["close", "select-host"]);
 
 const chartMode = ref("load");
-const timeRange = ref("realtime");
+const loadTimeRange = ref("realtime");
+const pingTimeRange = ref("1h");
+const timeRange = computed({
+  get: () => chartMode.value === "load" ? loadTimeRange.value : pingTimeRange.value,
+  set: (value) => {
+    if (chartMode.value === "load") loadTimeRange.value = value;
+    else pingTimeRange.value = value;
+  },
+});
 const showHostMenu = ref(false);
 const historyRecords = ref([]);
 const historyLoading = ref(false);
 const pingLines = ref([]);
 const pingLoading = ref(false);
-const historyHours = computed(() => ({ realtime: 1, "1h": 1, "4h": 4, "1d": 24 }[timeRange.value] || 1));
-const pingHours = computed(() => ({ "1h": 1, "4h": 4, "1d": 24 }[timeRange.value] || 1));
+const pingLinesCache = new Map();
+const historyHours = computed(() => ({ realtime: 1, "1h": 1, "4h": 4, "1d": 24, "2d": 48 }[loadTimeRange.value] || 1));
+const pingHours = computed(() => ({ "1h": 1, "4h": 4, "1d": 24 }[pingTimeRange.value] || 1));
 let historyRequestId = 0;
 let pingRequestId = 0;
-const MAX_CHART_POINTS = 500;
 
 function closeHostMenu(event) {
   if (!(event.target instanceof Element) || !event.target.closest(".hero-title-row")) {
@@ -55,73 +66,8 @@ function formatConnectionProcess(node) {
   return `${connections} / ${processes}`;
 }
 
-function getRecordValue(record, key) {
-  if (key === "cpu") return Number(record?.cpu?.usage);
-  if (key === "memory") return Number(record?.ram?.used);
-  if (key === "disk") return Number(record?.disk?.used);
-  if (key === "connections") return Number(record?.connections?.tcp) + Number(record?.connections?.udp);
-  return NaN;
-}
-
-function buildChartPath(records, key) {
-  const points = records
-    .map((record) => ({ time: Date.parse(record.updated_at || record.time), value: getRecordValue(record, key) }))
-    .filter((point) => Number.isFinite(point.time) && Number.isFinite(point.value))
-    .sort((left, right) => left.time - right.time);
-  const sampled = downsampleChartPoints(points);
-  if (sampled.length < 2) return "M0 78 L320 78";
-  const min = Math.min(...sampled.map((point) => point.value));
-  const span = Math.max(...sampled.map((point) => point.value)) - min || 1;
-  const typicalGap = getTypicalGap(sampled);
-  const breakThreshold = Math.min(30 * 60 * 1000, Math.max(2 * 60 * 1000, typicalGap * 6));
-  return sampled.map((point, index) => {
-    const x = (index / (sampled.length - 1)) * 320;
-    const y = 82 - ((point.value - min) / span) * 62;
-    const previous = sampled[index - 1];
-    const command = !previous || point.time - previous.time > breakThreshold ? "M" : "L";
-    return `${command}${x.toFixed(1)} ${y.toFixed(1)}`;
-  }).join(" ");
-}
-
-function downsampleChartPoints(points) {
-  if (points.length <= MAX_CHART_POINTS) return points;
-  const bucketSize = points.length / (MAX_CHART_POINTS / 2);
-  const sampled = [];
-  for (let start = 0; start < points.length; start += bucketSize) {
-    const bucket = points.slice(Math.floor(start), Math.ceil(start + bucketSize));
-    if (!bucket.length) continue;
-    const min = bucket.reduce((current, point) => point.value < current.value ? point : current);
-    const max = bucket.reduce((current, point) => point.value > current.value ? point : current);
-    sampled.push(min, max);
-  }
-  return sampled.sort((left, right) => left.time - right.time);
-}
-
-function getTypicalGap(points) {
-  const gaps = points.slice(1).map((point, index) => point.time - points[index].time).filter((gap) => gap > 0);
-  if (!gaps.length) return 60 * 1000;
-  gaps.sort((left, right) => left - right);
-  return gaps[Math.floor(gaps.length / 2)];
-}
-
 function latencyColor(index) {
   return ["blue", "green", "orange"][index % 3];
-}
-
-function buildLatencyPath(samples) {
-  const valid = samples.map((sample) => Number(sample.value)).filter((value) => value >= 0 && Number.isFinite(value));
-  if (valid.length < 2) return "";
-  const max = Math.max(100, ...valid);
-  return samples.map((sample, index) => {
-    const value = Number(sample.value);
-    if (value < 0 || !Number.isFinite(value)) return null;
-    const x = (index / Math.max(1, samples.length - 1)) * 700;
-    const y = 170 - (Math.min(value, max) / max) * 140;
-    const previous = samples[index - 1];
-    const previousValue = Number(previous?.value);
-    const command = !previous || previousValue < 0 || !Number.isFinite(previousValue) ? "M" : "L";
-    return `${command}${x.toFixed(1)} ${y.toFixed(1)}`;
-  }).filter(Boolean).join(" ");
 }
 
 function loadHistory(signal) {
@@ -152,19 +98,21 @@ watch(
 );
 
 watch(
-  [() => props.node.uuid, chartMode, pingHours],
-  (_value, _oldValue, onCleanup) => {
-    if (chartMode.value !== "latency") {
-      pingLines.value = [];
-      return;
-    }
+  [() => props.node.uuid, () => chartMode.value, () => timeRange.value],
+  (value, oldValue) => {
+    if (chartMode.value !== "latency") return;
+    const cacheKey = `${props.node.uuid}:${pingHours.value}`;
+    const cachedLines = pingLinesCache.get(cacheKey);
+    if (cachedLines) pingLines.value = cachedLines;
+    else if (oldValue && value[2] !== oldValue[2]) pingLines.value = [];
     const requestId = ++pingRequestId;
-    const controller = new AbortController();
-    onCleanup(() => controller.abort());
     pingLoading.value = true;
-    fetchNodePingData(props.node.uuid, pingHours.value, controller.signal)
+    fetchNodePingData(props.node.uuid, pingHours.value)
       .then((lines) => {
-        if (requestId === pingRequestId) pingLines.value = lines;
+        if (requestId === pingRequestId) {
+          pingLinesCache.set(cacheKey, lines);
+          pingLines.value = lines;
+        }
       })
       .catch((error) => {
         if (error?.name !== "AbortError" && requestId === pingRequestId) pingLines.value = [];
@@ -176,8 +124,8 @@ watch(
   { immediate: true },
 );
 
-watch(chartMode, (mode) => {
-  if (mode === "latency" && timeRange.value === "realtime") timeRange.value = "1h";
+watch(() => props.node.uuid, () => {
+  pingLines.value = [];
 });
 
 onMounted(() => document.addEventListener("click", closeHostMenu));
@@ -231,30 +179,23 @@ onBeforeUnmount(() => document.removeEventListener("click", closeHostMenu));
           <button :class="{ active: timeRange === '1h' }" @click="timeRange = '1h'">1 小时</button>
           <button :class="{ active: timeRange === '4h' }" @click="timeRange = '4h'">4 小时</button>
           <button :class="{ active: timeRange === '1d' }" @click="timeRange = '1d'">1 天</button>
+          <button v-if="chartMode === 'load'" :class="{ active: timeRange === '2d' }" @click="timeRange = '2d'">2 天</button>
         </div>
       </div>
-      <div v-if="chartMode === 'load' && historyLoading" class="chart-loading" aria-live="polite" aria-busy="true">
-        <span class="loading-spinner" aria-hidden="true" />
-        <p>加载历史数据...</p>
+      <div v-show="chartMode === 'load'" class="chart-view-cache">
+        <div v-if="historyLoading" class="chart-loading" aria-live="polite" aria-busy="true">
+          <span class="loading-spinner" aria-hidden="true" />
+          <p>加载数据...</p>
+        </div>
+      <LoadCharts v-else :records="historyRecords" :node="node" :realtime="loadTimeRange === 'realtime'" :range="loadTimeRange" :is-dark="isDark" />
       </div>
-      <div v-else-if="chartMode === 'load'" class="chart-grid">
-        <div class="chart-card"><strong>CPU</strong><b>{{ node.cpu }}%</b><svg viewBox="0 0 320 90" preserveAspectRatio="none"><path class="chart-line cpu" :d="buildChartPath(historyRecords, 'cpu')" /></svg></div>
-        <div class="chart-card"><strong>内存</strong><b>{{ node.memoryText }}</b><svg viewBox="0 0 320 90" preserveAspectRatio="none"><path class="chart-line memory" :d="buildChartPath(historyRecords, 'memory')" /></svg></div>
-        <div class="chart-card"><strong>硬盘</strong><b>{{ node.diskText }}</b><svg viewBox="0 0 320 90" preserveAspectRatio="none"><path class="chart-line disk" :d="buildChartPath(historyRecords, 'disk')" /></svg></div>
-        <div class="chart-card"><strong>连接 / 进程</strong><b>{{ formatConnectionProcess(node) }}</b><svg viewBox="0 0 320 90" preserveAspectRatio="none"><path class="chart-line network" :d="buildChartPath(historyRecords, 'connections')" /></svg></div>
-      </div>
-      <section v-else class="details-section latency-card">
-        <div v-if="pingLoading" class="chart-loading" aria-live="polite" aria-busy="true">
+      <section v-show="chartMode === 'latency'" class="details-section latency-card">
+        <div v-if="pingLoading && !pingLines.length" class="chart-loading" aria-live="polite" aria-busy="true">
           <span class="loading-spinner" aria-hidden="true" />
           <p>加载延迟数据...</p>
         </div>
-        <div v-else-if="pingLines.length" class="latency-legend">
-          <span v-for="(line, index) in pingLines" :key="line.id"><i :class="latencyColor(index)" />{{ line.name }} <b>{{ Number.isFinite(line.value) ? `${line.value.toFixed(1)} ms` : "暂无数据" }}</b> 丢包 {{ line.loss.toFixed(1) }}%</span>
-        </div>
-        <div v-else class="latency-empty">暂无延迟监测</div>
-        <svg v-if="!pingLoading && pingLines.length" class="latency-chart" viewBox="0 0 700 190" preserveAspectRatio="none">
-          <path v-for="(line, index) in pingLines" :key="line.id" :class="['latency-line', latencyColor(index)]" :d="buildLatencyPath(line.samples || [])" />
-        </svg>
+        <div v-else-if="!pingLoading && !pingLines.length" class="latency-empty">暂无延迟监测</div>
+        <PingCharts v-if="pingLines.length" :key="`${node.uuid}-${timeRange}`" :lines="pingLines" :hours="pingHours" :is-dark="isDark" />
       </section>
     </section>
   </main>

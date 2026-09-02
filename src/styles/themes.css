@@ -1,34 +1,46 @@
 .monitor-app.is-dark {
-  background: #212830;
-  color: #d1d7e0;
+  --dark-bg: #0f1722;
+  --dark-surface: #172231;
+  --dark-surface-elevated: #1d2a3a;
+  --dark-border: #2b3b4d;
+  --dark-border-soft: #233244;
+  --dark-text: #e7eef7;
+  --dark-muted: #9aaabd;
+  --dark-subtle: #73859a;
+  --dark-cyan: #59d4c5;
+  --dark-blue: #82aaff;
+  --dark-purple: #c69cff;
+  background: var(--dark-bg);
+  color: var(--dark-text);
 }
 .monitor-app.is-dark .header {
-  border-color: #343b46;
-  background: #262c36;
+  border-color: var(--dark-border-soft);
+  background: color-mix(in srgb, var(--dark-surface) 92%, transparent);
+  box-shadow: 0 8px 30px #07101d66;
 }
 
 .monitor-app.is-dark .header h1 {
-  color: #e4e8ee;
+  color: var(--dark-text);
 }
 .monitor-app.is-dark .toolbar button,
 .monitor-app.is-dark .toolbar a {
   border-color: transparent;
   background: transparent;
-  color: #b7bdc8;
+  color: var(--dark-muted);
 }
 
 .monitor-app.is-dark .toolbar button:hover,
 .monitor-app.is-dark .toolbar a:hover {
   border-color: transparent;
-  background: #2f3742;
-  color: #fff;
+  background: #26384a;
+  color: var(--dark-text);
 }
 .monitor-app.is-dark .overview-grid,
 .monitor-app.is-dark .group-bar,
 .monitor-app.is-dark .node-card {
-  border-color: #3d444d;
-  background: #262c36;
-  box-shadow: none;
+  border-color: var(--dark-border);
+  background: color-mix(in srgb, var(--dark-surface) 94%, transparent);
+  box-shadow: 0 12px 30px #07101d55;
 }
 .monitor-app.is-dark .overview-label,
 .monitor-app.is-dark .overview-card p,
@@ -37,21 +49,21 @@
 .monitor-app.is-dark .quota,
 .monitor-app.is-dark .latency-grid div,
 .monitor-app.is-dark .node-footer {
-  color: #b7bdc8;
+  color: var(--dark-muted);
 }
 .monitor-app.is-dark .overview-value,
 .monitor-app.is-dark .overview-card .overview-icon,
 .monitor-app.is-dark .node-title h2,
 .monitor-app.is-dark .metric-label b {
-  color: #d1d7e0;
+  color: var(--dark-text);
 }
 .monitor-app.is-dark .metric-label b.metric-value-traffic {
-  color: #83b5ff;
+  color: var(--dark-blue);
 }
 .monitor-app.is-dark .overview-card .overview-icon {
-  border-color: #3e6668;
-  background: #294648;
-  color: #83d8d0;
+  border-color: #397b78;
+  background: #1b4547;
+  color: var(--dark-cyan);
 }
 .monitor-app.is-dark .overview-value small,
 .monitor-app.is-dark .metric small,
@@ -59,33 +71,93 @@
 .monitor-app.is-dark .quota > span:last-of-type,
 .monitor-app.is-dark .latency-grid div b,
 .monitor-app.is-dark .latency-grid small {
-  color: #9198a1;
+  color: var(--dark-subtle);
 }
 
 .monitor-app.is-dark .group-bar button {
-  color: #d1d7e0;
+  color: #b7c9dc;
+  border-radius: 9px;
+  transition: background 140ms ease, color 140ms ease;
 }
 
+.monitor-app.is-dark .group-bar button:hover {
+  background: #26384a;
+  color: #eef6ff;
+}
+
+.monitor-app.is-dark .group-bar button.active {
+  background: #dcecff;
+  color: #14263b;
+  box-shadow: 0 3px 12px #0b132033;
+}
+
+.monitor-app.is-dark .group-code { color: inherit; }
+
 .monitor-app.is-dark .group-bar button i {
-  background: #343b45;
-  color: #b7bdc8;
+  background: #2a3c50;
+  color: #b8cce0;
+}
+
+.monitor-app.is-dark .group-bar button.active i {
+  background: #294765;
+  color: #e3f1ff;
 }
 
 .monitor-app.is-dark .node-actions button {
-  color: #9198a1;
+  color: var(--dark-subtle);
 }
 .monitor-app.is-dark .traffic-grid,
 .monitor-app.is-dark .io-grid,
 .monitor-app.is-dark .quota,
 .monitor-app.is-dark .latency-grid {
-  border-color: #3d444d;
+  border-color: var(--dark-border);
 }
 .monitor-app.is-dark .metric > i,
 .monitor-app.is-dark .traffic > i,
 .monitor-app.is-dark .quota > i {
-  background: repeating-linear-gradient(
-    90deg,
-    #343b45 0 8px,
-    transparent 8px 11px
-  );
+  background: #2a3a4b;
 }
+
+/* 深海玻璃层级：统一首页、筛选栏和卡片的暗色表面。 */
+.monitor-app.is-dark .sidebar,
+.monitor-app.is-dark .main-content,
+.monitor-app.is-dark .topbar,
+.monitor-app.is-dark .toolbar,
+.monitor-app.is-dark .group-bar,
+.monitor-app.is-dark .overview-card,
+.monitor-app.is-dark .node-card,
+.monitor-app.is-dark .details-panel,
+.monitor-app.is-dark .info-panel,
+.monitor-app.is-dark .chart-card {
+  border-color: var(--dark-border);
+  background: var(--dark-surface);
+  color: var(--dark-text);
+}
+.monitor-app.is-dark .sidebar { border-right-color: var(--dark-border-soft); }
+.monitor-app.is-dark .brand strong,
+.monitor-app.is-dark .node-title h2,
+.monitor-app.is-dark .overview-value,
+.monitor-app.is-dark .chart-card strong,
+.monitor-app.is-dark .info-panel h2 { color: var(--dark-text); }
+.monitor-app.is-dark .workspace-label,
+.monitor-app.is-dark .brand span,
+.monitor-app.is-dark .node-meta,
+.monitor-app.is-dark .metric-label,
+.monitor-app.is-dark .metric small,
+.monitor-app.is-dark .overview-label,
+.monitor-app.is-dark .overview-card p,
+.monitor-app.is-dark .info-items span,
+.monitor-app.is-dark .details-section,
+.monitor-app.is-dark .latency-legend { color: var(--dark-muted); }
+.monitor-app.is-dark .metric-label b,
+.monitor-app.is-dark .info-items b,
+.monitor-app.is-dark .latency-legend b { color: var(--dark-text); }
+.monitor-app.is-dark .chart-switch,
+.monitor-app.is-dark .time-switch { border-color: var(--dark-border); background: #14202d; }
+.monitor-app.is-dark .chart-switch button { color: var(--dark-muted); }
+.monitor-app.is-dark .chart-switch button.active { background: #237e7a; color: #f2fffd; box-shadow: 0 4px 14px #1aa99b44; }
+.monitor-app.is-dark .metric > i,
+.monitor-app.is-dark .traffic > i,
+.monitor-app.is-dark .quota > i { background: #2a3a4b; }
+.monitor-app.is-dark .details-panel,
+.monitor-app.is-dark .info-panel { box-shadow: 0 14px 36px #07101d55; }

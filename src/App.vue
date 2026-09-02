@@ -194,6 +194,7 @@ function getOverviewFromNodes(items) {
       v-if="selectedNode"
       :node="selectedNode"
       :hosts="nodes"
+      :is-dark="isDark"
       @close="closeDetails"
       @select-host="openNode(nodes.find((node) => node.uuid === $event))"
     />

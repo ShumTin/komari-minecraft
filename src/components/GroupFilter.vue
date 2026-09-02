@@ -23,7 +23,7 @@ defineEmits(["select"]);
       @click="$emit('select', group.code)"
     >
       <FlagIcon :code="group.code" :label="`${group.code} 节点`" />
-      {{ group.code }} <i>{{ group.count }}</i>
+      <span class="group-code">{{ group.code }}</span> <i>{{ group.count }}</i>
     </button>
   </section>
 </template>

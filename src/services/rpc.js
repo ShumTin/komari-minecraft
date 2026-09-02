@@ -57,3 +57,10 @@ export function getRpcTransportState() {
   if (client.connecting) return "connecting";
   return "http-fallback";
 }
+
+// 仅供自动化测试隔离单例状态，生产代码不应调用。
+export function resetRpcClientForTests() {
+  client?.close();
+  client = undefined;
+  requestId = 0;
+}

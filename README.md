@@ -9,6 +9,14 @@ npm install
 npm run dev
 ```
 
+提交前可运行完整检查：
+
+```bash
+npm run verify
+```
+
+该命令依次执行测试、生产构建和 Git 空白字符检查。
+
 独立 Vite 开发服务需要把 API 代理到 Komari 实例。复制 `.env.example` 为 `.env.local`，将地址改成你的 Komari 地址：
 
 ```bash

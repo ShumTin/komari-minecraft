@@ -1,7 +1,7 @@
 .node-grid {
   display: grid;
   /* 参考主题 Junimo：固定列数并保留卡片最小宽度，避免最后一行被拉伸。 */
-  grid-template-columns: repeat(4, minmax(260px, 1fr));
+  grid-template-columns: repeat(4, minmax(280px, 1fr));
   gap: 12px;
   padding-top: 18px;
 }
@@ -151,15 +151,15 @@
 }
 
 .node-flag {
-  width: 22px;
-  height: 15px;
+  width: 18px;
+  height: 12px;
   flex: 0 0 auto;
 }
 
 .flag-icon {
   display: block;
-  width: 22px;
-  height: 15px;
+  width: 18px;
+  height: 12px;
   overflow: hidden;
   box-sizing: border-box;
   object-fit: cover;
@@ -167,8 +167,8 @@
 
 .flag-fallback {
   display: inline-flex;
-  width: 22px;
-  height: 15px;
+  width: 18px;
+  height: 12px;
   align-items: center;
   justify-content: center;
   color: #69717c;

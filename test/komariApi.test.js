@@ -2,12 +2,14 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { fetchNodePingData, fetchSnapshot } from "../src/services/komariApi.js";
 import { fetchNodeHistory } from "../src/services/nodeHistory.js";
+import { resetRpcClientForTests } from "../src/services/rpc.js";
 
 const nodeUuid = "node-1";
 
 test("Komari 响应应完整映射为节点卡片数据", async (context) => {
   context.after(() => {
     globalThis.fetch = originalFetch;
+    resetRpcClientForTests();
   });
 
   const originalFetch = globalThis.fetch;
@@ -52,6 +54,7 @@ test("Komari 响应应完整映射为节点卡片数据", async (context) => {
 test("Ping 数据应在详情页按需加载并映射", async (context) => {
   context.after(() => {
     globalThis.fetch = originalFetch;
+    resetRpcClientForTests();
   });
 
   const originalFetch = globalThis.fetch;
@@ -71,6 +74,7 @@ test("Ping 数据应在详情页按需加载并映射", async (context) => {
 test("历史数据服务应读取统一 records 结构", async (context) => {
   context.after(() => {
     globalThis.fetch = originalFetch;
+    resetRpcClientForTests();
   });
 
   const originalFetch = globalThis.fetch;
@@ -87,6 +91,58 @@ test("历史数据服务应读取统一 records 结构", async (context) => {
 
   const records = await fetchNodeHistory(nodeUuid, 1);
   assert.deepEqual(records, [{ time: "2026-09-01T01:00:00Z", cpu: 12.5 }]);
+});
+
+test("节点刷新失败应向上抛出错误供页面显示", async (context) => {
+  const originalFetch = globalThis.fetch;
+  context.after(() => {
+    globalThis.fetch = originalFetch;
+    resetRpcClientForTests();
+  });
+  globalThis.fetch = async (_url, options) => {
+    const request = JSON.parse(options.body);
+    if (request.method === "public:getNodesInformation") throw new Error("连接失败");
+    return { ok: true, json: async () => ({ result: [] }) };
+  };
+
+  await assert.rejects(fetchSnapshot(), /连接失败/);
+});
+
+test("没有节点时应返回空快照而不发起指标请求", async (context) => {
+  const originalFetch = globalThis.fetch;
+  const methods = [];
+  context.after(() => {
+    globalThis.fetch = originalFetch;
+    resetRpcClientForTests();
+  });
+  globalThis.fetch = async (_url, options) => {
+    const request = JSON.parse(options.body);
+    methods.push(request.method);
+    return { ok: true, json: async () => ({ result: [] }) };
+  };
+
+  assert.deepEqual(await fetchSnapshot(), { nodes: [] });
+  assert.deepEqual(methods, ["public:getNodesInformation"]);
+});
+
+test("节点没有最新记录时应映射为离线状态", async (context) => {
+  const originalFetch = globalThis.fetch;
+  context.after(() => {
+    globalThis.fetch = originalFetch;
+    resetRpcClientForTests();
+  });
+  globalThis.fetch = async (_url, options) => {
+    const request = JSON.parse(options.body);
+    const result = request.method === "public:getNodesInformation"
+      ? [{ uuid: nodeUuid, name: "Offline node", region: "UN" }]
+      : [];
+    return { ok: true, json: async () => ({ jsonrpc: "2.0", id: request.id, result }) };
+  };
+
+  const snapshot = await fetchSnapshot();
+  assert.equal(snapshot.nodes.length, 1);
+  assert.equal(snapshot.nodes[0].status, "offline");
+  assert.equal(snapshot.nodes[0].online, "离线");
 });
 
 function getRpcResult(method) {

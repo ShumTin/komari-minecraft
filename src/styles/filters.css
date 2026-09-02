@@ -38,6 +38,18 @@
   margin-right: 8px;
 }
 
+.group-code {
+  position: relative;
+  top: -1px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
+  color: #3f4b58;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+}
+
 .group-bar button i {
   margin-left: 5px;
   padding: 3px 6px;
