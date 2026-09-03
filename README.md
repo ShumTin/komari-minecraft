@@ -31,7 +31,7 @@ KOMARI_URL=http://127.0.0.1:端口 npm run dev
 
 运行 `npm run package:theme`，将 `release/komari-theme-minecraft-v0.1.0.zip` 上传到 Komari 后台主题管理并启用。需要支持 managed 配置的 Komari（1.0.5 及以上），配置表单由后台生成。
 
-也可在“导入远程主题”中填写 GitHub 仓库地址。仓库的最新正式 Release 必须附带上述主题 ZIP，Komari 会从 Release 下载主题包；仅推送源码不能用于这种导入方式。本地打包命令需要 PowerShell 7（`pwsh`）。
+也可在“导入远程主题”中填写仓库地址：https://github.com/ShumTin/komari-minecraft 。仓库的最新正式 Release 必须附带上述主题 ZIP，Komari 会从 Release 下载主题包；仅推送源码不能用于这种导入方式。本地打包命令需要 PowerShell 7（`pwsh`）。
 
 主题设置包含默认外观（system/light/dark/mc）、资产币种、背景图片、三网任务名以及总览各项开关。背景支持 `浅色URL|深色URL`，MC 使用深色图片，留空恢复原背景。三网名称全部留空时自动匹配；填写名称后严格按完整任务名选择，缺失显示 `--`。关闭三网后显示各任务平均延迟和平均丢包率，详情图表仍展示全部任务。
 

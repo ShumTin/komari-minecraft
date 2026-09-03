@@ -3,6 +3,7 @@
   "short": "Minecraft",
   "description": "支持浅色、深色与 Minecraft 外观的监控面板",
   "version": "0.1.0",
+  "url": "https://github.com/ShumTin/komari-minecraft",
   "configuration": {
     "type": "managed",
     "name": "主题设置",
