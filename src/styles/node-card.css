@@ -529,17 +529,3 @@
   background: transparent;
   font-size: 13px;
 }
-
-.translate {
-  position: fixed;
-  right: 12px;
-  bottom: 258px;
-  width: 34px;
-  height: 34px;
-  border: 0;
-  border-radius: 50%;
-  background: #e58aaa;
-  color: #fff;
-  font-size: 16px;
-  box-shadow: 0 2px 8px #0002;
-}

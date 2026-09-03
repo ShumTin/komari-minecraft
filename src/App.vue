@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import Toolbar from "./components/Toolbar.vue";
 import OverviewCards from "./components/OverviewCards.vue";
 import GroupFilter from "./components/GroupFilter.vue";
@@ -18,18 +18,16 @@ function getSystemDark() {
 function readAppearance() {
   try {
     const stored = localStorage.getItem(APPEARANCE_STORAGE_KEY);
-    return stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
+    if (stored === "light" || stored === "dark" || stored === "mc") return stored;
   } catch {
-    return "system";
+    // 无法读取偏好时，按系统外观选择初始主题。
   }
-}
-
-function resolveDark(appearance) {
-  return appearance === "dark" || (appearance === "system" && getSystemDark());
+  return getSystemDark() ? "dark" : "light";
 }
 
 const appearance = ref(readAppearance());
-const isDark = ref(resolveDark(appearance.value));
+const isMinecraftTheme = computed(() => appearance.value === "mc");
+const isDark = computed(() => appearance.value === "dark");
 const faviconUrl = "/favicon.ico";
 const activeGroup = ref("all");
 const selectedNode = ref(null);
@@ -45,7 +43,6 @@ let refreshStopped = false;
 let realtimeTimer;
 let realtimeInFlight = false;
 let lastHttpFallbackAt = 0;
-let systemThemeMediaQuery;
 
 function persistAppearance(value) {
   try {
@@ -55,15 +52,9 @@ function persistAppearance(value) {
   }
 }
 
-function toggleTheme() {
-  const next = isDark.value ? "light" : "dark";
+function setAppearance(next) {
   appearance.value = next;
-  isDark.value = next === "dark";
   persistAppearance(next);
-}
-
-function handleSystemThemeChange(event) {
-  if (appearance.value === "system") isDark.value = event.matches;
 }
 
 function findNodeFromLocation() {
@@ -140,8 +131,6 @@ async function refreshRealtimeData() {
 }
 
 onMounted(() => {
-  systemThemeMediaQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
-  systemThemeMediaQuery?.addEventListener("change", handleSystemThemeChange);
   syncRoute();
   window.addEventListener("popstate", syncRoute);
   refreshStopped = false;
@@ -151,7 +140,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   refreshStopped = true;
   window.removeEventListener("popstate", syncRoute);
-  systemThemeMediaQuery?.removeEventListener("change", handleSystemThemeChange);
   window.clearTimeout(refreshTimer);
   window.clearInterval(realtimeTimer);
 });
@@ -195,13 +183,13 @@ function getOverviewFromNodes(items) {
 </script>
 
 <template>
-  <div class="monitor-app" :class="{ 'is-dark': isDark }">
+  <div class="monitor-app" :class="{ 'is-dark': isDark, 'mc-theme': isMinecraftTheme }">
     <header class="header">
       <div class="site-brand">
         <img class="site-icon" :src="faviconUrl" alt="" />
         <h1>Shum</h1>
       </div>
-      <Toolbar :is-dark="isDark" :is-loading="isLoading" @toggle-theme="toggleTheme" @refresh="refreshData" />
+      <Toolbar :appearance="appearance" :is-loading="isLoading" @set-appearance="setAppearance" @refresh="refreshData" />
     </header>
     <section
       v-if="!selectedNode && isLoading && nodes.length === 0"
@@ -232,12 +220,12 @@ function getOverviewFromNodes(items) {
       </section>
       <p v-if="!isLoading && !errorMessage && filteredNodes.length === 0" class="empty-state">暂无节点</p>
     </main>
-    <button v-if="!selectedNode" class="translate">文</button>
     <NodeDetails
       v-if="selectedNode"
       :node="selectedNode"
       :hosts="nodes"
       :is-dark="isDark"
+      :is-minecraft="isMinecraftTheme"
       @close="closeDetails"
       @select-host="openNode(nodes.find((node) => node.uuid === $event))"
     />

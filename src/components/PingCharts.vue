@@ -6,6 +6,7 @@ const props = defineProps({
   lines: { type: Array, default: () => [] },
   hours: { type: Number, default: 1 },
   isDark: { type: Boolean, default: false },
+  isMinecraft: { type: Boolean, default: false },
 });
 
 const host = ref(null);
@@ -41,9 +42,9 @@ function renderChart() {
     return;
   }
   const width = Math.max(320, host.value.clientWidth || 700);
-  const dark = props.isDark;
+  const dark = props.isDark || props.isMinecraft;
   const axis = dark ? "#8da0b5" : "#536576";
-  const grid = dark ? "#304255" : "#dce5eb";
+  const grid = dark ? "#26363d" : "#dce5eb";
   chart = new uPlot({
     width,
     height: 230,
@@ -98,7 +99,7 @@ function showAllLines() {
 
 onMounted(() => nextTick(renderChart));
 watch(() => props.lines, () => nextTick(renderChart));
-watch(() => props.isDark, () => {
+watch([() => props.isDark, () => props.isMinecraft], () => {
   chart?.destroy();
   chart = null;
   nextTick(renderChart);

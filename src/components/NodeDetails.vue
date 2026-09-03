@@ -13,6 +13,7 @@ const props = defineProps({
   node: { type: Object, required: true },
   hosts: { type: Array, default: () => [] },
   isDark: { type: Boolean, default: false },
+  isMinecraft: { type: Boolean, default: false },
 });
 const emit = defineEmits(["close", "select-host"]);
 
@@ -187,7 +188,7 @@ onBeforeUnmount(() => document.removeEventListener("click", closeHostMenu));
           <span class="loading-spinner" aria-hidden="true" />
           <p>加载数据...</p>
         </div>
-      <LoadCharts v-else :records="historyRecords" :node="node" :realtime="loadTimeRange === 'realtime'" :range="loadTimeRange" :is-dark="isDark" />
+      <LoadCharts v-else :records="historyRecords" :node="node" :realtime="loadTimeRange === 'realtime'" :range="loadTimeRange" :is-dark="isDark" :is-minecraft="isMinecraft" />
       </div>
       <section v-show="chartMode === 'latency'" class="details-section latency-card">
         <div v-if="pingLoading && !pingLines.length" class="chart-loading" aria-live="polite" aria-busy="true">
@@ -195,7 +196,7 @@ onBeforeUnmount(() => document.removeEventListener("click", closeHostMenu));
           <p>加载延迟数据...</p>
         </div>
         <div v-else-if="!pingLoading && !pingLines.length" class="latency-empty">暂无延迟监测</div>
-        <PingCharts v-if="pingLines.length" :key="`${node.uuid}-${timeRange}`" :lines="pingLines" :hours="pingHours" :is-dark="isDark" />
+        <PingCharts v-if="pingLines.length" :key="`${node.uuid}-${timeRange}`" :lines="pingLines" :hours="pingHours" :is-dark="isDark" :is-minecraft="isMinecraft" />
       </section>
     </section>
   </main>

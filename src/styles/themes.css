@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap");
+
 .monitor-app.is-dark {
   --dark-bg: #0f1722;
   --dark-surface: #172231;
@@ -12,6 +14,62 @@
   --dark-purple: #c69cff;
   background: var(--dark-bg);
   color: var(--dark-text);
+}
+
+/* 参考设计图的材质版 MC 皮肤：木框、羊皮纸、草边和世界背景。 */
+@scope (.monitor-app.mc-theme) {
+  .header { border-bottom:4px solid #111817; background:#171c1c; box-shadow:0 4px 0 #0009,inset 0 -3px 0 #303b32; }
+  .header::after { height:4px; background:repeating-linear-gradient(90deg,#8dbb4e 0 16px,#5a913e 16px 25px,#31592f 25px 32px); }
+  .header h1 { color:#77b947; text-shadow:2px 2px 0 #1d2b1c; }
+  .overview-grid,.group-bar,.node-card,.details-panel,.info-panel,.chart-card { border:4px solid #7d4d2c; border-radius:3px; background-color:#f2e2b9; background-image:none; box-shadow:4px 5px 0 #0b100d99,inset 0 0 0 2px #c18a50; }
+  .overview-grid { overflow:visible; }
+  .overview-card { border-right:2px solid #d0b983; background:transparent; color:#3d2a1d; }
+  .overview-card::before { top:-4px; height:8px; background:repeating-linear-gradient(90deg,#87b84f 0 14px,#5d963d 14px 22px,#3e6d32 22px 27px); box-shadow:inset 0 -2px 0 #35582d; }
+  .overview-card:nth-child(2)::before { background:repeating-linear-gradient(90deg,#87b84f 0 14px,#5d963d 14px 22px,#3e6d32 22px 27px); }
+  .overview-label,.metric-label,.overview-card p,.node-meta,.metric small,.io-grid span,.quota,.latency-panel h3,.latency-row,.details-section,.latency-legend { color:#6b5138; }
+  .overview-value,.node-title h2,.metric-label b,.io-grid b,.latency-row b,.info-panel h2,.info-items b,.chart-card strong { color:#302218; text-shadow:1px 1px 0 #fff5d055; }
+  .overview-card .overview-icon { border:2px solid #6e9d45; border-radius:2px; background:#d6e9a9; color:#3e7c3f; box-shadow:inset 2px 2px 0 #ffffff77,2px 2px 0 #5b3a2588; }
+  .group-bar { border-color:#714524; background-color:#5d3924; background-image:linear-gradient(90deg,#ffffff0c 1px,transparent 1px),linear-gradient(#2a170e22 1px,transparent 1px); background-size:13px 100%,100% 7px; box-shadow:4px 5px 0 #0b100d99,inset 0 2px 0 #a96e3d,inset 0 -3px 0 #382014; }
+  .group-bar::before { left:0; width:7px; background:repeating-linear-gradient(0deg,#83b84c 0 8px,#5d963c 8px 14px,#355e31 14px 17px); }
+  .group-bar button,.group-bar .group-code { color:#f2e4bd; text-shadow:1px 1px 0 #2c170e; }
+  .group-bar button i { background:#4e863c; color:#fff4c9; border-radius:2px; box-shadow:inset 0 1px 0 #b6dc76; }
+  .group-bar button.active { background:#8b6138; box-shadow:inset 0 -3px 0 #b6d86b; }
+  .node-card { border-color:#85532f; background-color:#f3e4bd; }
+  .node-card::before { height:9px; background:repeating-linear-gradient(90deg,#8cbd51 0 13px,#5f9b3c 13px 21px,#416f32 21px 27px); box-shadow:inset 0 -2px 0 #3b5d2e; }
+  .node-card::after { background:#865331; opacity:1; }
+  .node-head { margin:-2px -3px 13px; padding:7px 8px; border:2px solid #704323; background:linear-gradient(#9a6339,#704326); box-shadow:inset 0 2px 0 #c48a52,inset 0 -2px 0 #4b2b1c; }
+  .node-title h2 { color:#fff0cb; text-shadow:1px 1px 0 #382116; }
+  .metric > i,.traffic > i,.quota > i { background:#dfcc98; border:1px solid #b89b64; }
+  .traffic-grid,.io-grid,.detail-row,.details-title,.details-section,.latency-legend { border-color:#d1bb8b; }
+  .price { border-color:#5f8d3b; background:#dcedae; color:#39743a; }
+  .chart-switch { border-color:#a98451; background:#ead7a8; }
+  .chart-switch button { color:#6f5237; }
+  .chart-switch button.active { background:#6e9f45; color:#fff8d9; box-shadow:inset 0 -2px 0 #456d32; }
+  .chart-card { background:#f1e0b8; }
+  .details-back:hover,.details-back:focus-visible,.host-menu-trigger:hover,.host-menu-trigger:focus-visible { border-color:#6e9d45; background:#d6e9a9; color:#3e7c3f; }
+  .host-menu { border-color:#85532f; background:#f3e4bd; box-shadow:4px 4px 0 #0b100d99; }
+  .host-menu button:hover,.host-menu button.active { background:#dcedae; color:#2e5d35; }
+}
+
+/* 单一场景层：替代旧云层和地平线，不给卡片重新添加纹理。 */
+.monitor-app.mc-theme {
+  position: relative;
+  isolation: isolate;
+  background: #304c3e;
+}
+
+.monitor-app.mc-theme::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: #304c3e url("/assets/backgrounds/mc-meadow-dusk.png") center bottom / cover no-repeat;
+}
+
+/* 窄屏保留右侧猪和羊，避免裁切后只看到天空。 */
+@media (max-width: 800px) {
+  .monitor-app.mc-theme::before { background-position: 88% bottom; }
 }
 .monitor-app.is-dark .header {
   border-color: var(--dark-border-soft);
@@ -163,3 +221,126 @@
 .monitor-app.is-dark .quota > i { background: #2a3a4b; }
 .monitor-app.is-dark .details-panel,
 .monitor-app.is-dark .info-panel { box-shadow: 0 14px 36px #07101d55; }
+
+/* Minecraft 主题：保留原有信息排版，以方块材质、草地高光和红石橙作为视觉识别。 */
+.monitor-app.mc-theme { --mc-obsidian:#11171b; --mc-stone:#1b2428; --mc-stone-2:#222d31; --mc-stone-3:#2d393d; --mc-moss:#4d8b52; --mc-grass:#74b757; --mc-redstone:#e06a3b; --mc-gold:#e1b84c; --mc-diamond:#55c6c8; --mc-ink:#e7eee7; --mc-muted:#91a19a; color:var(--mc-ink); }
+.toolbar .theme-active { background:#e8edf0; color:#18181b; }
+.monitor-app.is-dark .toolbar .theme-active { background:#26384a; color:var(--dark-text); }
+@scope (.monitor-app.mc-theme) {
+.header { position:relative; border-bottom:2px solid #0c1012; background:var(--mc-stone); box-shadow:0 4px 0 #0008,inset 0 -3px 0 #31423a; }
+.header::after { content:""; position:absolute; right:0; bottom:-5px; left:0; height:3px; background:repeating-linear-gradient(90deg,var(--mc-grass) 0 18px,var(--mc-moss) 18px 28px,#355f3b 28px 32px); }
+.header h1,.site-brand h1,.overview-value,.node-title h2,.hero-copy h1,.details-title h2 { font-family:"VT323","Noto Sans SC",monospace; letter-spacing:.2px; }
+.header h1 { font-size:25px; color:var(--mc-grass); text-shadow:2px 2px 0 #172619; }
+.site-icon { image-rendering:pixelated; }
+.toolbar button,.toolbar a { border:2px solid #3a494c; border-radius:3px; background:var(--mc-stone-2); color:var(--mc-muted); box-shadow:inset 0 2px 0 #ffffff0b,2px 2px 0 #0006; }
+.toolbar button:hover,.toolbar a:hover { border-color:var(--mc-grass); background:#304333; color:#f3e6ae; }
+.toolbar .mc-toggle-active { border-color:var(--mc-grass); background:#3d593f; color:#f3e6ae; box-shadow:inset 0 -2px 0 var(--mc-grass),2px 2px 0 #0006; }
+.toolbar button:focus-visible,.toolbar a:focus-visible { outline-color:var(--mc-gold); }
+.overview-grid,.group-bar,.node-card,.details-panel,.info-panel,.chart-card { border:2px solid var(--mc-stone-3); border-radius:5px; background:var(--mc-stone); box-shadow:3px 3px 0 #0009,inset 0 1px 0 #ffffff0b; }
+.overview-card { border-right:2px solid var(--mc-stone-3); }
+.overview-card:last-child { border-right:0; }
+.overview-card .overview-label,.metric-label,.overview-card p,.node-meta,.metric small,.io-grid span,.quota,.latency-panel h3,.latency-row,.details-section,.latency-legend { color:var(--mc-muted); }
+.overview-value,.node-title h2,.metric-label b,.io-grid b,.latency-row b,.info-panel h2,.info-items b,.chart-card strong { color:var(--mc-ink); }
+.overview-value { font-size:29px; } .overview-value small { color:#a4b4a8; }
+.overview-card .overview-icon { border:2px solid #4d8053; border-radius:3px; background:#29452f; color:var(--mc-grass); }
+.overview-status b { background:var(--mc-grass); box-shadow:0 0 0 3px #74b75733; }
+.orange-text,.metric-label b.metric-value-traffic { color:var(--mc-redstone); } .traffic-upload { color:var(--mc-grass); } .traffic-download { color:var(--mc-diamond); }
+.bandwidth-upload { color:#91c9c2; } .bandwidth-download { color:#73b4d2; }
+.group-bar { background:var(--mc-stone); } .group-bar button { color:var(--mc-muted); border-radius:3px; }
+.group-bar button.active { color:#fff3c0; background:#3d593f; box-shadow:inset 0 -2px 0 var(--mc-grass); } .group-bar button i { border-radius:2px; background:#2a3538; color:#9aaa9c; }
+.group-bar .group-code { color:#d8e2d0; text-shadow:1px 1px 0 #101719; }
+.group-bar button:not(.active) i { color:#b8c9b3; background:#34433a; }
+.node-card { transition:border-color 160ms ease,transform 160ms ease,box-shadow 160ms ease; } .node-card:hover { border-color:var(--mc-grass); transform:translate(-1px,-2px); box-shadow:4px 5px 0 #000b,inset 0 1px 0 #ffffff12; }
+.node-status-dot { border-radius:2px; background:var(--mc-grass); box-shadow:0 0 0 4px #74b7572e; } .node-status-dot.offline { background:#d84d46; box-shadow:0 0 0 4px #d84d462e; }
+.metric>i,.traffic>i,.quota>i { border-radius:1px; background:#101719; } .metric>i b.blue { background:var(--mc-diamond); } .metric>i b.purple { background:#a879d6; } .metric>i b.orange { background:var(--mc-redstone); } .metric>i b.green,.quota>i b { background:var(--mc-grass); }
+.traffic-grid,.io-grid,.detail-row,.details-title,.details-section,.latency-legend { border-color:#344144; }
+.price { border:2px solid #7a6130; border-radius:3px; background:#4a3c20; color:#f0ca60; }
+.chart-switch { border:2px solid #3a494c; border-radius:3px; background:#151d20; } .chart-switch button { border-radius:2px; color:var(--mc-muted); } .chart-switch button.active { background:var(--mc-moss); color:#f2f7df; box-shadow:inset 0 -2px 0 var(--mc-grass); }
+.chart-card { background:#182125; } .chart-card-title .app-icon { color:var(--mc-diamond); } .chart-card:nth-child(2) .chart-card-title .app-icon { color:#b18ad8; } .chart-card:nth-child(3) .chart-card-title .app-icon { color:var(--mc-redstone); } .chart-card:nth-child(4) .chart-card-title .app-icon { color:var(--mc-grass); }
+.details-back:hover,.details-back:focus-visible,.host-menu-trigger:hover,.host-menu-trigger:focus-visible { border-color:#4d8053; background:#29452f; color:var(--mc-grass); }
+.host-menu { border:2px solid var(--mc-stone-3); border-radius:4px; background:var(--mc-stone-2); box-shadow:3px 3px 0 #0009; } .host-menu button:hover,.host-menu button.active { background:#3d593f; color:#f2f7df; }
+@media (prefers-reduced-motion:reduce) { .node-card { transition:none; } }
+
+/* 方块材质细节：草方块边缘、矿石色阶和苦力怕像素纹理。 */
+.overview-grid { background-image:none; }
+.overview-card { overflow:hidden; }
+.overview-card::before { content:""; position:absolute; top:0; right:0; left:0; height:5px; background:var(--mc-moss); box-shadow:inset 0 -2px 0 #355f3b; }
+.overview-card:nth-child(2)::before { background:#8b8f82; box-shadow:inset 0 -2px 0 #565b55; }
+.overview-card:nth-child(3)::before { background:var(--mc-diamond); box-shadow:inset 0 -2px 0 #2c777d; }
+.overview-card:nth-child(4)::before { background:var(--mc-redstone); box-shadow:inset 0 -2px 0 #913c2b; }
+.group-bar { position:relative; overflow:hidden; }
+.group-bar::before { content:""; width:7px; position:absolute; inset:0 auto 0 0; background:repeating-linear-gradient(0deg,var(--mc-grass) 0 8px,var(--mc-moss) 8px 14px,#355f3b 14px 17px); }
+.group-bar { padding-left:32px; }
+.node-card { position:relative; overflow:hidden; }
+.node-card::before { content:""; position:absolute; top:0; right:0; left:0; height:4px; background:linear-gradient(90deg,var(--mc-grass) 0 28%,var(--mc-moss) 28% 72%,#6b4a32 72%); }
+.node-card::after { content:""; position:absolute; right:0; bottom:0; width:12px; height:12px; background:var(--mc-redstone); clip-path:polygon(100% 0,100% 100%,0 100%); opacity:.8; }
+.node-status-dot { box-shadow:0 0 0 3px #74b7572e, inset 2px 2px 0 #ffffff55; }
+.metric > i b, .quota > i b { box-shadow:inset 0 2px 0 #ffffff40; }
+.price::before { content:"◆"; margin-right:4px; color:#f0ca60; font-size:9px; }
+
+/* 世界场景背景：天空、像素云和地平线草方块，形成 MC 模式的独立空间感。 */
+.overview-grid,.group-bar,.node-card,.details-panel,.info-panel,.chart-card { border-color:#53666a; background-color:#1b272b; background-image:none; box-shadow:4px 4px 0 #05090bcc,inset 0 1px 0 #afc4bd18; }
+.overview-card { background-color:transparent; }
+.group-bar { border-color:#5b4633; background-color:#382d26; background-image:linear-gradient(90deg,#ffffff08 1px,transparent 1px); background-size:11px 100%; box-shadow:4px 4px 0 #05090bcc,inset 0 2px 0 #9b6a40; }
+.group-bar::before { background:repeating-linear-gradient(0deg,#75a94e 0 8px,#4f7f42 8px 14px,#2d542f 14px 17px); }
+.node-head { margin:-6px -7px 13px; padding:7px 8px; border:2px solid #6a4930; background:linear-gradient(#745036,#4b3429); box-shadow:inset 0 2px 0 #b27a4a,inset 0 -2px 0 #2a1d1a; }
+.node-title h2 { color:#f0e7c7; text-shadow:1px 1px 0 #1a1412; }
+.node-card::before { height:5px; background:linear-gradient(90deg,#79b753 0 28%,#4e863f 28% 72%,#725035 72%); }
+.overview-card .overview-icon { box-shadow:inset 2px 2px 0 #b0d77b55,2px 2px 0 #08100a99; }
+.overview-card:nth-child(3) .overview-icon { box-shadow:inset 2px 2px 0 #c6ffff55,2px 2px 0 #08100a99; }
+.overview-card:nth-child(4) .overview-icon { box-shadow:inset 2px 2px 0 #ffb08a55,2px 2px 0 #08100a99; }
+.metric > i,.traffic > i,.quota > i { background:#0c1518; border:1px solid #334348; }
+.signal-bars > i { box-shadow:inset 0 2px 0 #ffffff38; }
+
+}
+
+/* 参考图覆盖层必须位于所有基础主题规则之后，保证 MC 材质拥有最终优先级。 */
+@scope (.monitor-app.mc-theme) {
+  .overview-grid,.group-bar,.node-card,.details-panel,.info-panel,.chart-card { border-color:#7d4d2c; background-color:#f2e2b9; background-image:none; box-shadow:4px 5px 0 #0b100d99,inset 0 0 0 2px #c18a50; }
+  .overview-card,.node-card { color:#3d2a1d; }
+  .overview-label,.metric-label,.overview-card p,.node-meta,.metric small,.io-grid span,.quota,.latency-panel h3,.latency-row,.details-section,.latency-legend { color:#6b5138; }
+  .overview-value,.node-title h2,.metric-label b,.io-grid b,.latency-row b,.info-panel h2,.info-items b,.chart-card strong { color:#302218; text-shadow:1px 1px 0 #fff5d055; }
+  .group-bar { border-color:#714524; background-color:#5d3924; background-image:linear-gradient(90deg,#ffffff0c 1px,transparent 1px),linear-gradient(#2a170e22 1px,transparent 1px); background-size:13px 100%,100% 7px; box-shadow:4px 5px 0 #0b100d99,inset 0 2px 0 #a96e3d,inset 0 -3px 0 #382014; }
+  .group-bar button,.group-bar .group-code { color:#f2e4bd; text-shadow:1px 1px 0 #2c170e; }
+  .group-bar button.active { background:#8b6138; box-shadow:inset 0 -3px 0 #b6d86b; }
+  .node-card { border-color:#85532f; background-color:#f3e4bd; }
+  .node-card::before { height:9px; background:repeating-linear-gradient(90deg,#8cbd51 0 13px,#5f9b3c 13px 21px,#416f32 21px 27px); box-shadow:inset 0 -2px 0 #3b5d2e; }
+  .node-head { border-color:#704323; background:linear-gradient(#9a6339,#704326); box-shadow:inset 0 2px 0 #c48a52,inset 0 -2px 0 #4b2b1c; }
+  .node-title h2 { color:#fff0cb; text-shadow:1px 1px 0 #382116; }
+  .metric > i,.traffic > i,.quota > i { background:#dfcc98; border-color:#b89b64; }
+  .traffic-grid,.io-grid,.detail-row,.details-title,.details-section,.latency-legend { border-color:#d1bb8b; }
+  .chart-switch { border-color:#a98451; background:#ead7a8; }
+  .chart-switch button { color:#6f5237; }
+  .chart-switch button.active { background:#6e9f45; color:#fff8d9; }
+  .chart-card { background:#f1e0b8; }
+
+  /* 独立实色底隔开场景图片，确保控件和状态不受云层明暗影响。 */
+  .details-hero {
+    background: #1b272b;
+    box-shadow: inset 0 -1px 0 #53666a;
+  }
+  .hero-copy h1 { color: #fff0cb; }
+  .details-back,
+  .host-menu-trigger {
+    background: transparent;
+    border-color: transparent;
+    color: #e0e7dc;
+    border-radius: 3px;
+    box-shadow: none;
+  }
+  .details-back:hover,
+  .host-menu-trigger:hover,
+  .details-back:focus-visible,
+  .host-menu-trigger:focus-visible {
+    background: #354b43;
+    border-color: #78916e;
+    color: #f0f4e8;
+  }
+  .details-back:focus-visible,
+  .host-menu-trigger:focus-visible { outline: 2px solid #b6dc76; outline-offset: 2px; }
+  .hero-status { color: #b6dc76; }
+  .hero-status.offline { color: #ffaaaa; }
+  .hero-status.warning,
+  .hero-status.unknown { color: #f2ce7d; }
+  .hero-status small { color: #e0e7dc; }
+}

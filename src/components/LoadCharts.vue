@@ -10,6 +10,7 @@ const props = defineProps({
   realtime: { type: Boolean, default: false },
   range: { type: String, default: "realtime" },
   isDark: { type: Boolean, default: false },
+  isMinecraft: { type: Boolean, default: false },
 });
 
 const hosts = ref([]);
@@ -82,9 +83,9 @@ function renderCharts() {
     if (!host) return;
     const data = makeData(definition);
     const width = Math.max(220, host.clientWidth || 320);
-    const dark = props.isDark;
+    const dark = props.isDark || props.isMinecraft;
     const axis = dark ? "#8da0b5" : "#536576";
-    const grid = dark ? "#304255" : "#dce5eb";
+    const grid = dark ? "#26363d" : "#dce5eb";
     const options = {
       width,
       height: 170,
@@ -164,7 +165,7 @@ watch([() => props.node.uuid, () => props.realtime, () => props.range], () => {
   forceRebuild = true;
   queueRender();
 });
-watch(() => props.isDark, () => {
+watch([() => props.isDark, () => props.isMinecraft], () => {
   forceRebuild = true;
   queueRender();
 });
