@@ -77,6 +77,7 @@
 .monitor-app.is-dark .group-bar button {
   color: #b7c9dc;
   border-radius: 9px;
+  border: 1px solid transparent;
   transition: background 140ms ease, color 140ms ease;
 }
 
@@ -86,8 +87,9 @@
 }
 
 .monitor-app.is-dark .group-bar button.active {
-  background: #dcecff;
-  color: #14263b;
+  border-color: #49637e;
+  background: #2a3c50;
+  color: #e3f1ff;
   box-shadow: 0 3px 12px #0b132033;
 }
 

@@ -9,7 +9,27 @@ import { fetchLatestStats, fetchSnapshot, supportsBatchLatestStats, updateNodeRe
 import { getRpcTransportState } from "./services/rpc.js";
 import { formatByteRate } from "./utils/format.js";
 
-const isDark = ref(false);
+const APPEARANCE_STORAGE_KEY = "komari-appearance";
+
+function getSystemDark() {
+  return typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+}
+
+function readAppearance() {
+  try {
+    const stored = localStorage.getItem(APPEARANCE_STORAGE_KEY);
+    return stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
+  } catch {
+    return "system";
+  }
+}
+
+function resolveDark(appearance) {
+  return appearance === "dark" || (appearance === "system" && getSystemDark());
+}
+
+const appearance = ref(readAppearance());
+const isDark = ref(resolveDark(appearance.value));
 const faviconUrl = "/favicon.ico";
 const activeGroup = ref("all");
 const selectedNode = ref(null);
@@ -25,6 +45,26 @@ let refreshStopped = false;
 let realtimeTimer;
 let realtimeInFlight = false;
 let lastHttpFallbackAt = 0;
+let systemThemeMediaQuery;
+
+function persistAppearance(value) {
+  try {
+    localStorage.setItem(APPEARANCE_STORAGE_KEY, value);
+  } catch {
+    // 浏览器禁用存储时仍保留当前会话主题。
+  }
+}
+
+function toggleTheme() {
+  const next = isDark.value ? "light" : "dark";
+  appearance.value = next;
+  isDark.value = next === "dark";
+  persistAppearance(next);
+}
+
+function handleSystemThemeChange(event) {
+  if (appearance.value === "system") isDark.value = event.matches;
+}
 
 function findNodeFromLocation() {
   const match = window.location.pathname.match(/^\/instance\/(.+)$/);
@@ -100,6 +140,8 @@ async function refreshRealtimeData() {
 }
 
 onMounted(() => {
+  systemThemeMediaQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
+  systemThemeMediaQuery?.addEventListener("change", handleSystemThemeChange);
   syncRoute();
   window.addEventListener("popstate", syncRoute);
   refreshStopped = false;
@@ -109,6 +151,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   refreshStopped = true;
   window.removeEventListener("popstate", syncRoute);
+  systemThemeMediaQuery?.removeEventListener("change", handleSystemThemeChange);
   window.clearTimeout(refreshTimer);
   window.clearInterval(realtimeTimer);
 });
@@ -158,7 +201,7 @@ function getOverviewFromNodes(items) {
         <img class="site-icon" :src="faviconUrl" alt="" />
         <h1>Shum</h1>
       </div>
-      <Toolbar :is-dark="isDark" :is-loading="isLoading" @toggle-theme="isDark = !isDark" @refresh="refreshData" />
+      <Toolbar :is-dark="isDark" :is-loading="isLoading" @toggle-theme="toggleTheme" @refresh="refreshData" />
     </header>
     <section
       v-if="!selectedNode && isLoading && nodes.length === 0"
