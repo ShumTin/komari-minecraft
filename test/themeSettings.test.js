@@ -3,7 +3,7 @@ import test from "node:test";
 import { createServer } from "vite";
 import { createSSRApp } from "vue";
 import { renderToString } from "@vue/server-renderer";
-import { fetchThemeSettings, normalizeSettings, resolveAppearance, resolveBackground } from "../src/services/themeSettings.js";
+import { fetchThemeSettings, normalizeSettings, resolveAppearance } from "../src/services/themeSettings.js";
 import { resetRpcClientForTests } from "../src/services/rpc.js";
 import { calculateAssets, fetchExchangeRates } from "../src/services/assets.js";
 import { getCardPingLines } from "../src/utils/cardPing.js";
@@ -11,25 +11,24 @@ import { getCardPingLines } from "../src/utils/cardPing.js";
 test("后台配置从公开 RPC 读取，非法值回退且 false 不被默认值覆盖", async (t) => {
   t.mock.method(globalThis, "fetch", async (_url, options) => {
     assert.equal(JSON.parse(options.body).method, "public:getPublicSettings");
-    return { ok: true, json: async () => ({ result: { theme_settings: { showAssets: false, showOnline: "false", defaultAppearance: "invalid" } } }) };
+    return { ok: true, json: async () => ({ result: { theme_settings: { showAssets: false, showOnline: "false", defaultAppearance: "dark", assetCurrency: "USD", backgroundImage: "old.jpg" } } }) };
   });
   t.after(resetRpcClientForTests);
   const settings = await fetchThemeSettings();
   assert.equal(settings.showAssets, false);
   assert.equal(settings.showOnline, true);
-  assert.equal(settings.defaultAppearance, "system");
+  // 升级后忽略后台残留的旧外观配置。
+  for (const key of ["defaultAppearance", "assetCurrency", "backgroundImage"]) assert.equal(key in settings, false);
 });
 
-test("本地选择优先于后台默认，系统变化仅影响跟随系统的用户", () => {
-  const settings = normalizeSettings({ defaultAppearance: "mc" });
-  assert.equal(resolveAppearance(null, settings, true), "mc");
-  assert.equal(resolveAppearance("light", settings, true), "light");
-  settings.defaultAppearance = "system";
-  assert.equal(resolveAppearance(null, settings, true), "dark");
-  assert.equal(resolveAppearance(null, settings, false), "light");
-  assert.equal(resolveBackground(" light.jpg | dark.jpg ", "mc"), "dark.jpg");
-  assert.equal(resolveBackground("light.jpg|", "dark"), "light.jpg");
-  assert.equal(resolveBackground("", "mc"), "");
+test("首页主题选择不受系统变化影响，未选择时跟随系统", () => {
+  for (const mode of ["light", "dark", "mc"]) {
+    assert.equal(resolveAppearance(mode, true), mode);
+    assert.equal(resolveAppearance(mode, false), mode);
+  }
+  assert.equal(resolveAppearance(null, true), "dark");
+  assert.equal(resolveAppearance(null, false), "light");
+  assert.equal(resolveAppearance("invalid", false), "light");
 });
 
 const lines = [
@@ -62,9 +61,10 @@ test("不同币种先折算再计算剩余价值，缺失汇率不能冒充完�
     { price: 10, currency: "$", billingCycle: 30, expiredAt: new Date(now + 15 * 86400000).toISOString() },
     { price: 70, currency: "¥", billingCycle: -1 },
   ];
-  assert.deepEqual(calculateAssets(nodes, "CNY", { USD: 1 / 7, CNY: 1 }, now), { value: "CNY 105.00", forecast: "总价值 CNY 140.00" });
-  assert.equal(calculateAssets(nodes, "USD", null, now).value, "暂无完整估值");
-  assert.equal(calculateAssets([{ ...nodes[0], expiredAt: "2020-01-01" }], "USD", null, now).value, "USD 0.00");
+  assert.deepEqual(calculateAssets(nodes, { USD: 1 / 7, CNY: 1 }, now), { value: "CNY 105.00", forecast: "总价值 CNY 140.00" });
+  assert.equal(calculateAssets(nodes, null, now).value, "暂无完整估值");
+  assert.equal(calculateAssets([nodes[1]], null, now).value, "CNY 70.00");
+  assert.equal(calculateAssets([{ ...nodes[0], expiredAt: "2020-01-01" }], { USD: 1 / 7 }, now).value, "CNY 0.00");
 });
 
 test("汇率失败明确报错，成功结果缓存避免每次节点刷新重复请求", async (t) => {

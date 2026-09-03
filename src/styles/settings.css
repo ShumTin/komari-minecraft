@@ -1,12 +1,2 @@
-/* 动态外观覆盖放在基础主题之后，清空背景即可恢复各主题原样。 */
-.monitor-app.has-background { position: relative; isolation: isolate; }
-.monitor-app.has-background::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--custom-background) center / cover no-repeat;
-}
 .monitor-app .overview-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
 .rate-source { position: relative; z-index: 1; font-size: 10px; color: inherit; opacity: .65; }

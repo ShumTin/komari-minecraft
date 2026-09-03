@@ -8,7 +8,7 @@ import NodeDetails from "./components/NodeDetails.vue";
 import { fetchLatestStats, fetchSnapshot, supportsBatchLatestStats, updateNodeRealtime } from "./services/komariApi.js";
 import { getRpcTransportState } from "./services/rpc.js";
 import { calculateAssets, fetchExchangeRates } from "./services/assets.js";
-import { fetchThemeSettings, normalizeSettings, resolveAppearance, resolveBackground } from "./services/themeSettings.js";
+import { fetchThemeSettings, normalizeSettings, resolveAppearance } from "./services/themeSettings.js";
 import { formatByteRate } from "./utils/format.js";
 
 const APPEARANCE_STORAGE_KEY = "komari-appearance";
@@ -32,9 +32,7 @@ const settingsError = ref("");
 const rates = ref(null);
 const localAppearance = ref(readAppearance());
 const systemDark = ref(getSystemDark());
-const appearance = computed(() => resolveAppearance(localAppearance.value, settings.value, systemDark.value));
-const background = computed(() => resolveBackground(settings.value.backgroundImage, appearance.value));
-const backgroundStyle = computed(() => background.value ? { "--custom-background": 'url(' + JSON.stringify(background.value) + ')' } : {});
+const appearance = computed(() => resolveAppearance(localAppearance.value, systemDark.value));
 const systemQuery = window.matchMedia("(prefers-color-scheme: dark)");
 let settingsInFlight = false;
 function syncSystem(event) { systemDark.value = event.matches; }
@@ -200,7 +198,7 @@ function getOverviewFromNodes(items) {
   const totalRate = formatByteRate(speedUp + speedDown, "B/s");
   return {
     online: { current: online, total: items.length, rate: items.length ? `${((online / items.length) * 100).toFixed(2)}%` : "0%" },
-    assets: calculateAssets(items, settings.value.assetCurrency, rates.value),
+    assets: calculateAssets(items, rates.value),
     traffic: { today: toGb(trafficUp + trafficDown), unit: "GB", upload: `${toGb(trafficUp)} GB`, download: `${toGb(trafficDown)} GB` },
     bandwidth: {
       value: totalRate.value,
@@ -213,7 +211,7 @@ function getOverviewFromNodes(items) {
 </script>
 
 <template>
-  <div class="monitor-app" :style="backgroundStyle" :class="{ 'is-dark': isDark, 'mc-theme': isMinecraftTheme, 'has-background': background }">
+  <div class="monitor-app" :class="{ 'is-dark': isDark, 'mc-theme': isMinecraftTheme }">
     <header class="header">
       <div class="site-brand">
         <img class="site-icon" :src="faviconUrl" alt="" />

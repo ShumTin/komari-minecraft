@@ -14,7 +14,7 @@ export async function fetchExchangeRates() {
 }
 
 /** @returns {{value: string, forecast: string}} */
-export function calculateAssets(nodes, currency, rates, now = Date.now()) {
+export function calculateAssets(nodes, rates, now = Date.now()) {
   let total = 0;
   let remaining = 0;
   let missing = 0;
@@ -23,7 +23,7 @@ export function calculateAssets(nodes, currency, rates, now = Date.now()) {
     if (!(node.price > 0)) continue;
     const raw = String(node.currency).trim().toUpperCase();
     const source = aliases[raw] || raw;
-    const ratio = source === currency ? 1 : rates?.[currency] / rates?.[source];
+    const ratio = source === "CNY" ? 1 : 1 / rates?.[source];
     if (!Number.isFinite(ratio) || ratio <= 0) { missing++; continue; }
     const value = node.price * ratio;
     total += value;
@@ -32,7 +32,7 @@ export function calculateAssets(nodes, currency, rates, now = Date.now()) {
     else if (!Number.isFinite(expiry) || node.billingCycle <= 0) unknownExpiry++;
     else remaining += value * Math.max(0, Math.min(1, (expiry - now) / (node.billingCycle * 86400000)));
   }
-  const format = (value) => `${currency} ${value.toFixed(2)}`;
+  const format = (value) => `CNY ${value.toFixed(2)}`;
   return { value: missing || unknownExpiry ? "暂无完整估值" : format(remaining),
     forecast: missing ? `${missing} 个节点缺少可用币种或汇率` : `总价值 ${format(total)}${unknownExpiry ? ` · ${unknownExpiry} 个节点计费信息不完整` : ""}` };
 }

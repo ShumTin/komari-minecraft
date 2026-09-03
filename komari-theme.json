@@ -2,16 +2,12 @@
   "name": "Komari Minecraft",
   "short": "Minecraft",
   "description": "支持浅色、深色与 Minecraft 外观的监控面板",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "url": "https://github.com/ShumTin/komari-minecraft",
   "configuration": {
     "type": "managed",
     "name": "主题设置",
     "data": [
-      { "type": "title", "name": "基础外观" },
-      { "key": "defaultAppearance", "name": "默认主题模式", "type": "select", "options": "system,light,dark,mc", "default": "system", "help": "system 跟随系统，mc 为 Minecraft。用户本地选择优先。" },
-      { "key": "assetCurrency", "name": "资产折算币种", "type": "select", "options": "CNY,USD,HKD,EUR,GBP,JPY,RUB,CHF,INR,VND,THB,CAD", "default": "CNY", "help": "按参考汇率折算总价值和剩余价值。" },
-      { "key": "backgroundImage", "name": "背景图片 URL", "type": "string", "default": "", "help": "用 | 分隔浅色和深色背景，例如 light.jpg|dark.jpg；MC 使用深色背景。留空恢复主题背景。" },
       { "type": "title", "name": "服务器卡片" },
       { "key": "showCarrierPing", "name": "启用三网延迟", "type": "switch", "default": false, "help": "开启显示电信、移动、联通延迟和丢包；关闭显示平均值。" },
       { "key": "telecomPingTaskName", "name": "电信延迟任务名称", "type": "string", "default": "", "help": "填写完整任务名。三项全部留空时按运营商名称匹配，再按任务顺序补充；指定任务无数据时显示 --。" },
