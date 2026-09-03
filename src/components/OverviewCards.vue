@@ -19,7 +19,6 @@ defineProps({ overview: { type: Object, required: true }, settings: { type: Obje
       <div class="overview-label">剩余价值</div>
       <div class="overview-value">{{ overview.assets.value }}</div>
       <p>{{ overview.assets.forecast }}</p>
-      <a class="rate-source" href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">汇率：ExchangeRate-API</a>
       <span class="overview-icon"><AppIcon name="wallet" :size="22" /></span>
     </div>
     <div v-if="settings.showTraffic" class="overview-card">
