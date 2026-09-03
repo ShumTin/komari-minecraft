@@ -3,7 +3,7 @@ import test from "node:test";
 import { createServer } from "vite";
 import { createSSRApp } from "vue";
 import { renderToString } from "@vue/server-renderer";
-import { fetchThemeSettings, normalizeSettings, resolveAppearance } from "../src/services/themeSettings.js";
+import { fetchThemeSettings, normalizeSettings, resolveAppearance, syncAdminAppearance } from "../src/services/themeSettings.js";
 import { resetRpcClientForTests } from "../src/services/rpc.js";
 import { calculateAssets, fetchExchangeRates } from "../src/services/assets.js";
 import { getCardPingLines } from "../src/utils/cardPing.js";
@@ -29,6 +29,26 @@ test("首页主题选择不受系统变化影响，未选择时跟随系统", ()
   assert.equal(resolveAppearance(null, true), "dark");
   assert.equal(resolveAppearance(null, false), "light");
   assert.equal(resolveAppearance("invalid", false), "light");
+});
+
+test("后台使用首页明暗映射，MC 偏好不会写进后台或被覆盖", (t) => {
+  const original = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+  const values = new Map([["komari-appearance", "mc"]]);
+  Object.defineProperty(globalThis, "localStorage", { configurable: true, value: { setItem: (key, value) => values.set(key, value) } });
+  t.after(() => {
+    if (original) Object.defineProperty(globalThis, "localStorage", original);
+    else delete globalThis.localStorage;
+  });
+  for (const [home, admin] of [["dark", "dark"], ["mc", "light"], ["light", "light"]]) {
+    syncAdminAppearance(home);
+    assert.equal(values.get("appearance"), admin);
+    assert.equal(values.get("komari-appearance"), "mc");
+  }
+  values.set("appearance", "dark");
+  syncAdminAppearance("mc");
+  assert.equal(values.get("appearance"), "light");
+  Object.defineProperty(globalThis, "localStorage", { configurable: true, get() { throw new Error("存储被禁用"); } });
+  assert.doesNotThrow(() => syncAdminAppearance("dark"));
 });
 
 const lines = [

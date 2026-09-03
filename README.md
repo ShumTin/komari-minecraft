@@ -29,13 +29,15 @@ KOMARI_URL=http://127.0.0.1:端口 npm run dev
 
 ## 后台主题设置与安装
 
-运行 `npm run package:theme`，将 `release/komari-theme-minecraft-v0.1.3.zip` 上传到 Komari 后台主题管理并启用。需要支持 managed 配置的 Komari（1.0.5 及以上），配置表单由后台生成。
+运行 `npm run package:theme`，将 `release/komari-theme-minecraft-v1.0.0.zip` 上传到 Komari 后台主题管理并启用。需要支持 managed 配置的 Komari（1.0.5 及以上），配置表单由后台生成。
 
 也可在“导入远程主题”中填写仓库地址：https://github.com/ShumTin/komari-minecraft 。仓库的最新正式 Release 必须附带上述主题 ZIP，Komari 会从 Release 下载主题包；仅推送源码不能用于这种导入方式。本地打包命令需要 PowerShell 7（`pwsh`）。
 
 后台主题设置仅包含三网任务名、三网延迟开关以及总览各项开关。三网名称全部留空时自动匹配；填写名称后严格按完整任务名选择，缺失显示 `--`。关闭三网后显示各任务平均延迟和平均丢包率，详情图表仍展示全部任务。
 
 用户通过首页工具栏选择浅色、深色或 MC 主题，选择保存在浏览器的 `komari-appearance` 本地存储项中；未选择时跟随系统。背景使用各主题内置样式，不支持自定义背景图片。旧版本后台保存的外观、币种和背景配置不再生效。
+
+后台明暗跟随首页：浅色和 MC 对应后台浅色，深色对应后台深色。首页加载、切换主题和点击后台入口时会同步后台的 `appearance` 偏好；已经打开的后台标签页刷新后生效。此同步依赖同源部署，独立 Vite 开发页无法写入另一域名或端口的后台存储。
 
 前台每 30 秒、手动刷新以及切回标签页时读取后台设置。配置读取失败会显示提示并保留上次配置。
 

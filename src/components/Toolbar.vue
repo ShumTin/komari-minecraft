@@ -4,7 +4,7 @@ import { Box, Moon, RefreshCw, Settings, Sun } from "lucide-vue-next";
 const adminUrl = __KOMARI_ADMIN_URL__;
 
 defineProps({ appearance: { type: String, required: true }, isLoading: Boolean });
-defineEmits(["set-appearance", "refresh"]);
+defineEmits(["set-appearance", "refresh", "open-admin"]);
 </script>
 
 <template>
@@ -15,6 +15,6 @@ defineEmits(["set-appearance", "refresh"]);
     <button title="MC 主题" aria-label="MC 主题" :aria-pressed="appearance === 'mc'" :class="{ 'mc-toggle-active': appearance === 'mc' }" @click="$emit('set-appearance', 'mc')">
       <Box :size="18" :stroke-width="1.8" aria-hidden="true" />
     </button>
-    <a :href="adminUrl" target="_blank" rel="noopener noreferrer" title="进入后台" aria-label="进入后台"><Settings :size="17" :stroke-width="1.8" aria-hidden="true" /></a>
+    <a :href="adminUrl" target="_blank" rel="noopener noreferrer" title="进入后台" aria-label="进入后台" @click="$emit('open-admin')"><Settings :size="17" :stroke-width="1.8" aria-hidden="true" /></a>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import Toolbar from "./components/Toolbar.vue";
 import OverviewCards from "./components/OverviewCards.vue";
 import GroupFilter from "./components/GroupFilter.vue";
@@ -8,7 +8,7 @@ import NodeDetails from "./components/NodeDetails.vue";
 import { fetchLatestStats, fetchSnapshot, supportsBatchLatestStats, updateNodeRealtime } from "./services/komariApi.js";
 import { getRpcTransportState } from "./services/rpc.js";
 import { calculateAssets, fetchExchangeRates } from "./services/assets.js";
-import { fetchThemeSettings, normalizeSettings, resolveAppearance } from "./services/themeSettings.js";
+import { fetchThemeSettings, normalizeSettings, resolveAppearance, syncAdminAppearance } from "./services/themeSettings.js";
 import { formatByteRate } from "./utils/format.js";
 
 const APPEARANCE_STORAGE_KEY = "komari-appearance";
@@ -33,6 +33,7 @@ const rates = ref(null);
 const localAppearance = ref(readAppearance());
 const systemDark = ref(getSystemDark());
 const appearance = computed(() => resolveAppearance(localAppearance.value, systemDark.value));
+watch(appearance, syncAdminAppearance, { immediate: true, flush: "sync" });
 const systemQuery = window.matchMedia("(prefers-color-scheme: dark)");
 let settingsInFlight = false;
 function syncSystem(event) { systemDark.value = event.matches; }
@@ -217,7 +218,7 @@ function getOverviewFromNodes(items) {
         <img class="site-icon" :src="faviconUrl" alt="" />
         <h1>Shum</h1>
       </div>
-      <Toolbar :appearance="appearance" :is-loading="isLoading" @set-appearance="setAppearance" @refresh="refreshData" />
+      <Toolbar :appearance="appearance" :is-loading="isLoading" @set-appearance="setAppearance" @refresh="refreshData" @open-admin="syncAdminAppearance(appearance)" />
     </header>
     <section
       v-if="!selectedNode && isLoading && nodes.length === 0"

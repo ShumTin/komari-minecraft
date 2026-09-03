@@ -22,3 +22,12 @@ export function resolveAppearance(local, systemDark) {
   if (["light", "dark", "mc"].includes(local)) return local;
   return systemDark ? "dark" : "light";
 }
+
+export function syncAdminAppearance(appearance) {
+  try {
+    // 后台只支持明暗模式；MC 仅保存在首页的独立偏好中。
+    localStorage.setItem("appearance", appearance === "dark" ? "dark" : "light");
+  } catch {
+    // 存储不可用时，不影响首页主题切换及后台入口。
+  }
+}
