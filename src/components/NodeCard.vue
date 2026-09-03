@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from "vue";
+import { getCardPingLines } from "../utils/cardPing.js";
 import AppIcon from "./AppIcon.vue";
 import FlagIcon from "./FlagIcon.vue";
 import NodeMetric from "./NodeMetric.vue";
@@ -7,7 +9,8 @@ import TrafficMetric from "./TrafficMetric.vue";
 import { getNodeStatus, getNodeStatusLabel } from "../utils/nodeStatus.js";
 import { formatByteRate } from "../utils/format.js";
 
-defineProps({ node: { type: Object, required: true } });
+const props = defineProps({ node: { type: Object, required: true }, settings: { type: Object, required: true } });
+const pingLines = computed(() => getCardPingLines(props.node.pingLines || [], props.settings));
 defineEmits(["select"]);
 
 function latencyTone(value) {
@@ -143,19 +146,19 @@ function getTrafficText(node) {
     <div class="latency-grid">
       <div class="latency-panel">
         <h3>延迟</h3>
-        <div v-for="line in node.pingLines || []" :key="line.id" class="latency-row">
+        <div v-for="line in pingLines" :key="line.id" class="latency-row">
           <span class="line-name">{{ line.name }}</span><b>{{ Number.isFinite(line.value) ? `${line.value.toFixed(0)} ms` : "--" }}</b>
           <span class="signal-bars"><i v-for="(sample, index) in line.samples" :key="index" :class="latencyTone(sample.value)" :data-tooltip="`${sampleTime(sample.time)}\n${sample.value >= 0 ? `${sample.value} ms` : '超时'}`" /></span>
         </div>
-        <span v-if="!node.pingLines?.length" class="line-name">暂无监测</span>
+        <span v-if="!pingLines.length" class="line-name">暂无监测</span>
       </div>
       <div class="latency-panel">
         <h3>丢包</h3>
-        <div v-for="line in node.pingLines || []" :key="line.id" class="latency-row">
-          <span class="line-name">{{ line.name }}</span><b>{{ line.loss.toFixed(1) }}%</b>
+        <div v-for="line in pingLines" :key="line.id" class="latency-row">
+          <span class="line-name">{{ line.name }}</span><b>{{ Number.isFinite(line.loss) ? `${line.loss.toFixed(1)}%` : '--' }}</b>
           <span class="signal-bars"><i v-for="(sample, index) in line.samples" :key="index" :class="sample.value < 0 ? 'packet-loss' : packetTone(line.loss)" :data-tooltip="`${sampleTime(sample.time)}\n${sample.value < 0 ? '丢包' : `${line.loss.toFixed(1)}%`}`" /></span>
         </div>
-        <span v-if="!node.pingLines?.length" class="line-name">暂无监测</span>
+        <span v-if="!pingLines.length" class="line-name">暂无监测</span>
       </div>
     </div>
   </article>

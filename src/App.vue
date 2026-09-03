@@ -7,6 +7,8 @@ import NodeCard from "./components/NodeCard.vue";
 import NodeDetails from "./components/NodeDetails.vue";
 import { fetchLatestStats, fetchSnapshot, supportsBatchLatestStats, updateNodeRealtime } from "./services/komariApi.js";
 import { getRpcTransportState } from "./services/rpc.js";
+import { calculateAssets, fetchExchangeRates } from "./services/assets.js";
+import { fetchThemeSettings, normalizeSettings, resolveAppearance, resolveBackground } from "./services/themeSettings.js";
 import { formatByteRate } from "./utils/format.js";
 
 const APPEARANCE_STORAGE_KEY = "komari-appearance";
@@ -22,19 +24,45 @@ function readAppearance() {
   } catch {
     // 无法读取偏好时，按系统外观选择初始主题。
   }
-  return getSystemDark() ? "dark" : "light";
+  return null;
 }
 
-const appearance = ref(readAppearance());
+const settings = ref(normalizeSettings());
+const settingsError = ref("");
+const rates = ref(null);
+const localAppearance = ref(readAppearance());
+const systemDark = ref(getSystemDark());
+const appearance = computed(() => resolveAppearance(localAppearance.value, settings.value, systemDark.value));
+const background = computed(() => resolveBackground(settings.value.backgroundImage, appearance.value));
+const backgroundStyle = computed(() => background.value ? { "--custom-background": 'url(' + JSON.stringify(background.value) + ')' } : {});
+const systemQuery = window.matchMedia("(prefers-color-scheme: dark)");
+let settingsInFlight = false;
+function syncSystem(event) { systemDark.value = event.matches; }
+async function refreshSettings() {
+  if (settingsInFlight) return;
+  settingsInFlight = true;
+  try {
+    settings.value = await fetchThemeSettings();
+    settingsError.value = "";
+  } catch { settingsError.value = "主题设置加载失败，暂用上次配置或默认值"; }
+  if (settings.value.showStatsBar && settings.value.showAssets) {
+    try { rates.value = await fetchExchangeRates(); }
+    catch { rates.value = null; }
+  }
+  settingsInFlight = false;
+}
+function refreshVisibleSettings() {
+  if (document.visibilityState === "visible") void refreshSettings();
+}
 const isMinecraftTheme = computed(() => appearance.value === "mc");
 const isDark = computed(() => appearance.value === "dark");
 const faviconUrl = "/favicon.ico";
 const activeGroup = ref("all");
 const selectedNode = ref(null);
 const isLoading = ref(true);
-const overview = ref(getOverviewFromNodes([]));
 const groups = ref([]);
 const nodes = ref([]);
+const overview = computed(() => getOverviewFromNodes(nodes.value));
 const filteredNodes = ref(nodes.value);
 const errorMessage = ref("");
 let refreshTimer;
@@ -53,7 +81,7 @@ function persistAppearance(value) {
 }
 
 function setAppearance(next) {
-  appearance.value = next;
+  localAppearance.value = next;
   persistAppearance(next);
 }
 
@@ -84,11 +112,12 @@ function refreshData() {
   refreshInFlight = true;
   isLoading.value = true;
   errorMessage.value = "";
+  window.clearTimeout(refreshTimer);
+  void refreshSettings();
   return fetchSnapshot()
     .then((snapshot) => {
       nodes.value = snapshot.nodes;
       groups.value = getGroupsFromNodes(snapshot.nodes);
-      overview.value = getOverviewFromNodes(snapshot.nodes);
       selectGroup(activeGroup.value);
       if (selectedNode.value) {
         selectedNode.value = nodes.value.find((node) => node.uuid === selectedNode.value.uuid) || null;
@@ -118,7 +147,6 @@ async function refreshRealtimeData() {
     const latest = await fetchLatestStats(nodes.value.map((node) => node.uuid));
     if (getRpcTransportState() !== "websocket") lastHttpFallbackAt = Date.now();
     nodes.value = await Promise.all(nodes.value.map((node) => updateNodeRealtime(node, latest.get(node.uuid) || [])));
-    overview.value = getOverviewFromNodes(nodes.value);
     selectGroup(activeGroup.value);
     if (selectedNode.value) {
       selectedNode.value = nodes.value.find((node) => node.uuid === selectedNode.value.uuid) || null;
@@ -131,6 +159,8 @@ async function refreshRealtimeData() {
 }
 
 onMounted(() => {
+  systemQuery.addEventListener("change", syncSystem);
+  document.addEventListener("visibilitychange", refreshVisibleSettings);
   syncRoute();
   window.addEventListener("popstate", syncRoute);
   refreshStopped = false;
@@ -139,6 +169,8 @@ onMounted(() => {
 });
 onBeforeUnmount(() => {
   refreshStopped = true;
+  systemQuery.removeEventListener("change", syncSystem);
+  document.removeEventListener("visibilitychange", refreshVisibleSettings);
   window.removeEventListener("popstate", syncRoute);
   window.clearTimeout(refreshTimer);
   window.clearInterval(realtimeTimer);
@@ -163,14 +195,12 @@ function getOverviewFromNodes(items) {
   const speedUp = items.reduce((sum, node) => sum + (Number(node.up) || 0), 0);
   const speedDown = items.reduce((sum, node) => sum + (Number(node.down) || 0), 0);
   const toGb = (bytes) => (bytes / 1024 ** 3).toFixed(2);
-  const assets = items.reduce((sum, node) => sum + (node.price || 0), 0);
-  const currency = items[0]?.currency || "¥";
   const uploadRate = formatByteRate(speedUp, "B/s");
   const downloadRate = formatByteRate(speedDown, "B/s");
   const totalRate = formatByteRate(speedUp + speedDown, "B/s");
   return {
     online: { current: online, total: items.length, rate: items.length ? `${((online / items.length) * 100).toFixed(2)}%` : "0%" },
-    assets: { value: `${currency}${assets.toFixed(2)}`, forecast: "按节点价格汇总" },
+    assets: calculateAssets(items, settings.value.assetCurrency, rates.value),
     traffic: { today: toGb(trafficUp + trafficDown), unit: "GB", upload: `${toGb(trafficUp)} GB`, download: `${toGb(trafficDown)} GB` },
     bandwidth: {
       value: totalRate.value,
@@ -183,7 +213,7 @@ function getOverviewFromNodes(items) {
 </script>
 
 <template>
-  <div class="monitor-app" :class="{ 'is-dark': isDark, 'mc-theme': isMinecraftTheme }">
+  <div class="monitor-app" :style="backgroundStyle" :class="{ 'is-dark': isDark, 'mc-theme': isMinecraftTheme, 'has-background': background }">
     <header class="header">
       <div class="site-brand">
         <img class="site-icon" :src="faviconUrl" alt="" />
@@ -201,7 +231,8 @@ function getOverviewFromNodes(items) {
       <p>加载节点...</p>
     </section>
     <main v-else-if="!selectedNode" :aria-busy="isLoading">
-      <OverviewCards :overview="overview" />
+      <OverviewCards :overview="overview" :settings="settings" />
+      <p v-if="settingsError" class="data-error" role="alert">{{ settingsError }}</p>
       <p v-if="errorMessage" class="data-error" role="alert">{{ errorMessage }}</p>
       <div class="node-filters">
         <GroupFilter
@@ -215,6 +246,7 @@ function getOverviewFromNodes(items) {
           v-for="node in filteredNodes"
           :key="node.name"
           :node="node"
+          :settings="settings"
           @select="openNode"
         />
       </section>

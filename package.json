@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test",
-    "verify": "npm test && npm run build && git diff --check"
+    "verify": "npm test && npm run build && git diff --check",
+    "package:theme": "npm run build && pwsh -NoProfile -File scripts/package-theme.ps1"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "latest",

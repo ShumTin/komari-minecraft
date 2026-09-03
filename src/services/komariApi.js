@@ -242,6 +242,7 @@ function toNodeModel(node, records, pingLines = []) {
     processCount: optionalNumber(stats?.process),
     pingLines,
     online: online ? formatUptime(stats.uptime) : "离线",
+    expiredAt: node.expired_at || null,
     expires: formatExpiry(node.expired_at),
     status: online ? "online" : "offline",
     uuid: node.uuid,
@@ -281,7 +282,7 @@ function createPingLines(uuid, tasks, records, stats) {
         id: task.id,
         name: task.name,
         value: Number(stat?.latest ?? latestValid),
-        loss: Number(stat?.loss) || 0,
+        loss: stat?.loss != null ? Number(stat.loss) : taskRecords.length ? taskRecords.filter((sample) => sample.value < 0).length / taskRecords.length * 100 : NaN,
         samples: recentTaskRecords,
       };
     });

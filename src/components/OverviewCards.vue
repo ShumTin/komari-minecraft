@@ -1,12 +1,12 @@
 <script setup>
 import AppIcon from "./AppIcon.vue";
 
-defineProps({ overview: { type: Object, required: true } });
+defineProps({ overview: { type: Object, required: true }, settings: { type: Object, required: true } });
 </script>
 
 <template>
-  <section class="overview-grid">
-    <div class="overview-card">
+  <section v-if="settings.showStatsBar && (settings.showOnline || settings.showAssets || settings.showTraffic || settings.showSpeed)" class="overview-grid">
+    <div v-if="settings.showOnline" class="overview-card">
       <div class="overview-label">在线节点</div>
       <div class="overview-value">
         {{ overview.online.current
@@ -15,13 +15,14 @@ defineProps({ overview: { type: Object, required: true } });
       <p class="overview-status"><b />在线率 {{ overview.online.rate }}</p>
       <span class="overview-icon"><AppIcon name="server" :size="22" /></span>
     </div>
-    <div class="overview-card">
+    <div v-if="settings.showAssets" class="overview-card">
       <div class="overview-label">剩余价值</div>
       <div class="overview-value">{{ overview.assets.value }}</div>
       <p>{{ overview.assets.forecast }}</p>
+      <a class="rate-source" href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">汇率：ExchangeRate-API</a>
       <span class="overview-icon"><AppIcon name="wallet" :size="22" /></span>
     </div>
-    <div class="overview-card">
+    <div v-if="settings.showTraffic" class="overview-card">
       <div class="overview-label">累计流量</div>
       <div class="overview-value">
         {{ overview.traffic.today }}<small>{{ overview.traffic.unit }}</small>
@@ -33,7 +34,7 @@ defineProps({ overview: { type: Object, required: true } });
       </p>
       <span class="overview-icon"><AppIcon name="database" :size="22" /></span>
     </div>
-    <div class="overview-card">
+    <div v-if="settings.showSpeed" class="overview-card">
       <div class="overview-label">实时速率</div>
       <div class="overview-value orange-text">
         {{ overview.bandwidth.value
