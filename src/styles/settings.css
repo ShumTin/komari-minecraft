@@ -1,3 +1,1 @@
 .monitor-app .overview-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
-.monitor-app .site-footer { display: block; padding: 24px 0 8px; text-align: center; font-size: 11px; color: inherit; opacity: .65; }
-.site-footer a { color: inherit; }

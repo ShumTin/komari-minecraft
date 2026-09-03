@@ -29,7 +29,7 @@ KOMARI_URL=http://127.0.0.1:端口 npm run dev
 
 ## 后台主题设置与安装
 
-运行 `npm run package:theme`，将 `release/komari-theme-minecraft-v0.1.2.zip` 上传到 Komari 后台主题管理并启用。需要支持 managed 配置的 Komari（1.0.5 及以上），配置表单由后台生成。
+运行 `npm run package:theme`，将 `release/komari-theme-minecraft-v0.1.3.zip` 上传到 Komari 后台主题管理并启用。需要支持 managed 配置的 Komari（1.0.5 及以上），配置表单由后台生成。
 
 也可在“导入远程主题”中填写仓库地址：https://github.com/ShumTin/komari-minecraft 。仓库的最新正式 Release 必须附带上述主题 ZIP，Komari 会从 Release 下载主题包；仅推送源码不能用于这种导入方式。本地打包命令需要 PowerShell 7（`pwsh`）。
 

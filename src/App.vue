@@ -249,9 +249,6 @@ function getOverviewFromNodes(items) {
         />
       </section>
       <p v-if="!isLoading && !errorMessage && filteredNodes.length === 0" class="empty-state">暂无节点</p>
-      <footer v-if="settings.showStatsBar && settings.showAssets" class="site-footer">
-        <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">汇率来源：ExchangeRate-API</a>
-      </footer>
     </main>
     <NodeDetails
       v-if="selectedNode"
