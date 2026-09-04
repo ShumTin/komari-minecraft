@@ -1,7 +1,22 @@
 node_modules/
 dist/
-.env.local
-.env.*.local
+
+.env
+.env.*
+!.env.example
+
+*.log
+*.zip
+coverage/
+.vite/
+*.tsbuildinfo
+
+.idea/
+.vscode/
+.claude/
+.codex/
+
 .DS_Store
+Thumbs.db
 
 release/

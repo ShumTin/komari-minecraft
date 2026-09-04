@@ -1,4 +1,5 @@
 import { callRpc } from "./rpc.js";
+import { formatExpiry } from "../utils/format.js";
 
 let latestStatsCapability = null;
 const pingTasksCache = { value: null, expiresAt: 0, pending: null };
@@ -316,10 +317,4 @@ function formatDetailedUptime(seconds) {
   if (hours) parts.push(`${hours} 小时`);
   if (minutes || parts.length === 0) parts.push(`${minutes} 分钟`);
   return parts.join(" ");
-}
-
-function formatExpiry(value) {
-  if (!value) return "--";
-  const days = Math.ceil((Date.parse(value) - Date.now()) / 86400000);
-  return days > 0 ? `${days} 天` : "已到期";
 }

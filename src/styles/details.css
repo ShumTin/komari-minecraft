@@ -76,9 +76,6 @@
 
 .details-back .app-icon { vertical-align: middle; }
 .details-hero { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
-.hero-country { margin: 0 14px 0 4px; font-size: 16px; }
-.hero-flag { width: 26px; height: 18px; margin: 0 5px 0 4px; }
-.hero-flag.flag-icon { width: 26px; height: 18px; }
 .hero-copy { position: relative; min-width: 0; }
 .hero-copy > .hero-title-row { display: flex; align-items: center; gap: 9px; }
 .hero-title-row { position: relative; }
@@ -127,59 +124,6 @@
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 12px 30px #24345d0d;
-}
-
-.details-title {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 2px 0 24px;
-  border-bottom: 1px solid #eceef1;
-}
-
-.details-title > span {
-  display: grid;
-  width: 46px;
-  height: 46px;
-  place-items: center;
-  border-radius: 13px;
-  background: #edf2ff;
-  font-size: 25px;
-}
-
-.details-title h2 {
-  margin: 0;
-  font-size: 21px;
-  letter-spacing: -0.4px;
-}
-
-.details-title p {
-  margin: 5px 0 0;
-  color: #8c929d;
-  font-size: 11px;
-}
-
-.details-status {
-  display: flex;
-  align-items: center;
-  padding: 18px 0;
-  color: #409c6d;
-  font-size: 12px;
-}
-
-.details-status b {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin-right: 7px;
-  border-radius: 50%;
-  background: #16a34a;
-}
-
-.details-status span {
-  margin-left: auto;
-  color: #959ba5;
-  font-size: 10px;
 }
 
 .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -231,32 +175,6 @@
   font-size: 12px;
 }
 
-.ping-list {
-  display: grid;
-  gap: 9px;
-}
-.ping-list span,
-.detail-row {
-  display: flex;
-  align-items: center;
-  color: #6d7480;
-  font-size: 11px;
-}
-
-.ping-list i {
-  width: 7px;
-  height: 7px;
-  margin-right: 8px;
-  border-radius: 50%;
-  background: #52aa7e;
-}
-.ping-list b,
-.detail-row b {
-  margin-left: auto;
-  color: #303640;
-  font-weight: 600;
-}
-
 .latency-legend { display: flex; flex-wrap: wrap; gap: 14px 24px; padding-bottom: 14px; border-bottom: 1px solid #eceef1; color: #697581; font-size: 11px; }
 .latency-empty { padding: 28px 0; color: #8b96a2; font-size: 12px; text-align: center; }
 .latency-card { margin-top: 0; padding-top: 0; border-top: 0; }
@@ -274,11 +192,6 @@
 .ping-uplot-host .uplot { animation: chart-reveal 0.7s ease-out; }
 .ping-chart-tooltip { top: 50px; }
 .ping-chart-tooltip span + span { margin-top: 4px; }
-
-.detail-row {
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f1f3;
-}
 
 .monitor-app.is-dark .details-panel {
   background: #262c36;
@@ -302,16 +215,11 @@
 .monitor-app.is-dark .info-items > div { border-color: #3d444d; }
 .monitor-app.is-dark .info-items::after,
 .monitor-app.is-dark .latency-legend { border-color: #304255; }
-.monitor-app.is-dark .details-title > span {
-  background: #303c59;
-}
 .monitor-app.is-dark .details-back { border-color: transparent; background: transparent; color: #9fb6f5; }
 .monitor-app.is-dark .details-back:hover,
 .monitor-app.is-dark .details-back:focus-visible { border-color: #3d444d; background: #252d37; }
 .monitor-app.is-dark .details-back:hover { color: #c0d0ff; }
-.monitor-app.is-dark .details-title,
-.monitor-app.is-dark .details-section,
-.monitor-app.is-dark .detail-row {
+.monitor-app.is-dark .details-section {
   border-color: #3d444d;
 }
 .monitor-app.is-dark .latency-legend { border-color: #3d444d; }
@@ -324,13 +232,6 @@
   .details-info-grid { grid-template-columns: 1fr; }
   .chart-toolbar { align-items: flex-start; flex-direction: column; gap: 8px; }
   .details-panel { padding: 24px 20px 28px; border-radius: 13px; }
-  .details-title h2 { font-size: 18px; }
-  .details-status { align-items: flex-start; flex-wrap: wrap; gap: 6px; }
-  .details-status span { width: 100%; margin-left: 15px; }
   .chart-grid { grid-template-columns: 1fr; }
   .info-items b { font-size: 13px; }
-}
-.monitor-app.is-dark .ping-list b,
-.monitor-app.is-dark .detail-row b {
-  color: #d1d7e0;
 }

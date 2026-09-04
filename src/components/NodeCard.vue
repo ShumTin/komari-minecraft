@@ -7,7 +7,7 @@ import NodeMetric from "./NodeMetric.vue";
 import SystemIcon from "./SystemIcon.vue";
 import TrafficMetric from "./TrafficMetric.vue";
 import { getNodeStatus, getNodeStatusLabel } from "../utils/nodeStatus.js";
-import { formatByteRate } from "../utils/format.js";
+import { formatByteRate, formatCost } from "../utils/format.js";
 
 const props = defineProps({ node: { type: Object, required: true }, settings: { type: Object, required: true } });
 const pingLines = computed(() => getCardPingLines(props.node.pingLines || [], props.settings));
@@ -33,14 +33,6 @@ function packetTone(loss) {
 function sampleTime(value) {
   if (!value) return "--:--";
   return new Date(value).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false });
-}
-
-function getCost(node) {
-  if (Number.isFinite(Number(node.price)) && Number(node.price) > 0) {
-    const cycle = Number(node.billingCycle) === 30 ? "月" : "年";
-    return `${node.currency || "$"}${Number(node.price).toFixed(2)}/${cycle}`;
-  }
-  return node.name.startsWith("Tokyo") ? "$5.00/月" : "$49.99/年";
 }
 
 function formatTraffic(value, fallback) {
@@ -90,7 +82,7 @@ function getTrafficText(node) {
       <span><AppIcon name="clock" /> 到期 <b class="expire">{{ node.expires }}</b></span>
       <span
         ><AppIcon name="wallet" />
-        <b class="cost">{{ getCost(node) }}</b></span
+        <b class="cost">{{ formatCost(node) }}</b></span
       >
     </div>
     <div class="metric-grid">

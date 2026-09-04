@@ -232,8 +232,7 @@
   white-space: nowrap;
 }
 .metric > i,
-.traffic > i,
-.quota > i {
+.traffic > i {
   display: block;
   width: 100%;
   height: 4px;
@@ -278,8 +277,7 @@
   border-top: 1px solid #ededee;
 }
 .traffic > div,
-.io-grid > div,
-.node-footer > span {
+.io-grid > div {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -329,37 +327,6 @@
   color: #6a7079;
   font-size: 12px;
   font-weight: 500;
-}
-
-.quota {
-  padding: 13px 0 14px;
-  border-bottom: 1px solid #ededee;
-  color: #676c75;
-  font-size: 11px;
-}
-
-.quota > span:last-of-type {
-  float: right;
-  color: #858a92;
-  font-size: 10px;
-}
-
-.quota > span b {
-  margin-left: 5px;
-  font-weight: 500;
-}
-
-.quota > i {
-  clear: both;
-  height: 8px;
-  margin-top: 10px;
-}
-
-.quota > i b {
-  display: block;
-  height: 100%;
-  border-radius: 3px;
-  background: #58b27f;
 }
 
 .latency-grid {
@@ -520,12 +487,4 @@
   color: #3d9d69;
   font-size: 11px;
   font-weight: 700;
-}
-
-.price-top {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font-size: 13px;
 }

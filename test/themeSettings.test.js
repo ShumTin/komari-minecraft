@@ -7,6 +7,7 @@ import { fetchThemeSettings, normalizeSettings, resolveAppearance, syncAdminAppe
 import { resetRpcClientForTests } from "../src/services/rpc.js";
 import { calculateAssets, fetchExchangeRates } from "../src/services/assets.js";
 import { getCardPingLines } from "../src/utils/cardPing.js";
+import { formatCost, formatExpiry } from "../src/utils/format.js";
 
 test("后台配置从公开 RPC 读取，非法值回退且 false 不被默认值覆盖", async (t) => {
   t.mock.method(globalThis, "fetch", async (_url, options) => {
@@ -85,6 +86,15 @@ test("不同币种先折算再计算剩余价值，缺失汇率不能冒充完�
   assert.equal(calculateAssets(nodes, null, now).value, "暂无完整估值");
   assert.equal(calculateAssets([nodes[1]], null, now).value, "CNY 70.00");
   assert.equal(calculateAssets([{ ...nodes[0], expiredAt: "2020-01-01" }], { USD: 1 / 7 }, now).value, "CNY 0.00");
+});
+
+test("长期节点和未设置费用不应显示失真的天数或演示价格", () => {
+  const now = Date.parse("2026-09-04T00:00:00Z");
+  assert.equal(formatExpiry("2226-09-04T00:00:00Z", now), "长期");
+  assert.equal(formatExpiry("2026-10-04T00:00:00Z", now), "30 天");
+  assert.equal(formatCost({ price: 0 }), "免费");
+  assert.equal(formatCost({}), "免费");
+  assert.equal(formatCost({ price: 5, currency: "$", billingCycle: 30 }), "$5.00/月");
 });
 
 test("汇率失败明确报错，成功结果缓存避免每次节点刷新重复请求", async (t) => {

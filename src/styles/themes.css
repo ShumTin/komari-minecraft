@@ -26,7 +26,7 @@
   .overview-card { border-right:2px solid #d0b983; background:transparent; color:#3d2a1d; }
   .overview-card::before { top:-4px; height:8px; background:repeating-linear-gradient(90deg,#87b84f 0 14px,#5d963d 14px 22px,#3e6d32 22px 27px); box-shadow:inset 0 -2px 0 #35582d; }
   .overview-card:nth-child(2)::before { background:repeating-linear-gradient(90deg,#87b84f 0 14px,#5d963d 14px 22px,#3e6d32 22px 27px); }
-  .overview-label,.metric-label,.overview-card p,.node-meta,.metric small,.io-grid span,.quota,.latency-panel h3,.latency-row,.details-section,.latency-legend { color:#6b5138; }
+  .overview-label,.metric-label,.overview-card p,.node-meta,.metric small,.io-grid span,.latency-panel h3,.latency-row,.details-section,.latency-legend { color:#6b5138; }
   .overview-value,.node-title h2,.metric-label b,.io-grid b,.latency-row b,.info-panel h2,.info-items b,.chart-card strong { color:#302218; text-shadow:1px 1px 0 #fff5d055; }
   .overview-card .overview-icon { border:2px solid #6e9d45; border-radius:2px; background:#d6e9a9; color:#3e7c3f; box-shadow:inset 2px 2px 0 #ffffff77,2px 2px 0 #5b3a2588; }
   .group-bar { border-color:#714524; background-color:#5d3924; background-image:linear-gradient(90deg,#ffffff0c 1px,transparent 1px),linear-gradient(#2a170e22 1px,transparent 1px); background-size:13px 100%,100% 7px; box-shadow:4px 5px 0 #0b100d99,inset 0 2px 0 #a96e3d,inset 0 -3px 0 #382014; }
@@ -39,8 +39,8 @@
   .node-card::after { background:#865331; opacity:1; }
   .node-head { margin:-2px -3px 13px; padding:7px 8px; border:2px solid #704323; background:linear-gradient(#9a6339,#704326); box-shadow:inset 0 2px 0 #c48a52,inset 0 -2px 0 #4b2b1c; }
   .node-title h2 { color:#fff0cb; text-shadow:1px 1px 0 #382116; }
-  .metric > i,.traffic > i,.quota > i { background:#dfcc98; border:1px solid #b89b64; }
-  .traffic-grid,.io-grid,.detail-row,.details-title,.details-section,.latency-legend { border-color:#d1bb8b; }
+  .metric > i,.traffic > i { background:#dfcc98; border:1px solid #b89b64; }
+  .traffic-grid,.io-grid,.details-section,.latency-legend { border-color:#d1bb8b; }
   .price { border-color:#5f8d3b; background:#dcedae; color:#39743a; }
   .chart-switch { border-color:#a98451; background:#ead7a8; }
   .chart-switch button { color:#6f5237; }
@@ -104,9 +104,7 @@
 .monitor-app.is-dark .overview-card p,
 .monitor-app.is-dark .metric-label,
 .monitor-app.is-dark .io-grid span,
-.monitor-app.is-dark .quota,
-.monitor-app.is-dark .latency-grid div,
-.monitor-app.is-dark .node-footer {
+.monitor-app.is-dark .latency-grid div {
   color: var(--dark-muted);
 }
 .monitor-app.is-dark .overview-value,
@@ -126,7 +124,6 @@
 .monitor-app.is-dark .overview-value small,
 .monitor-app.is-dark .metric small,
 .monitor-app.is-dark .io-grid b,
-.monitor-app.is-dark .quota > span:last-of-type,
 .monitor-app.is-dark .latency-grid div b,
 .monitor-app.is-dark .latency-grid small {
   color: var(--dark-subtle);
@@ -168,20 +165,15 @@
 }
 .monitor-app.is-dark .traffic-grid,
 .monitor-app.is-dark .io-grid,
-.monitor-app.is-dark .quota,
 .monitor-app.is-dark .latency-grid {
   border-color: var(--dark-border);
 }
 .monitor-app.is-dark .metric > i,
-.monitor-app.is-dark .traffic > i,
-.monitor-app.is-dark .quota > i {
+.monitor-app.is-dark .traffic > i {
   background: #2a3a4b;
 }
 
 /* 深海玻璃层级：统一首页、筛选栏和卡片的暗色表面。 */
-.monitor-app.is-dark .sidebar,
-.monitor-app.is-dark .main-content,
-.monitor-app.is-dark .topbar,
 .monitor-app.is-dark .toolbar,
 .monitor-app.is-dark .group-bar,
 .monitor-app.is-dark .overview-card,
@@ -193,14 +185,10 @@
   background: var(--dark-surface);
   color: var(--dark-text);
 }
-.monitor-app.is-dark .sidebar { border-right-color: var(--dark-border-soft); }
-.monitor-app.is-dark .brand strong,
 .monitor-app.is-dark .node-title h2,
 .monitor-app.is-dark .overview-value,
 .monitor-app.is-dark .chart-card strong,
 .monitor-app.is-dark .info-panel h2 { color: var(--dark-text); }
-.monitor-app.is-dark .workspace-label,
-.monitor-app.is-dark .brand span,
 .monitor-app.is-dark .node-meta,
 .monitor-app.is-dark .metric-label,
 .monitor-app.is-dark .metric small,
@@ -217,8 +205,7 @@
 .monitor-app.is-dark .chart-switch button { color: var(--dark-muted); }
 .monitor-app.is-dark .chart-switch button.active { background: #237e7a; color: #f2fffd; box-shadow: 0 4px 14px #1aa99b44; }
 .monitor-app.is-dark .metric > i,
-.monitor-app.is-dark .traffic > i,
-.monitor-app.is-dark .quota > i { background: #2a3a4b; }
+.monitor-app.is-dark .traffic > i { background: #2a3a4b; }
 .monitor-app.is-dark .details-panel,
 .monitor-app.is-dark .info-panel { box-shadow: 0 14px 36px #07101d55; }
 
@@ -229,7 +216,7 @@
 @scope (.monitor-app.mc-theme) {
 .header { position:relative; border-bottom:2px solid #0c1012; background:var(--mc-stone); box-shadow:0 4px 0 #0008,inset 0 -3px 0 #31423a; }
 .header::after { content:""; position:absolute; right:0; bottom:-5px; left:0; height:3px; background:repeating-linear-gradient(90deg,var(--mc-grass) 0 18px,var(--mc-moss) 18px 28px,#355f3b 28px 32px); }
-.header h1,.site-brand h1,.overview-value,.node-title h2,.hero-copy h1,.details-title h2 { font-family:"VT323","Noto Sans SC",monospace; letter-spacing:.2px; }
+.header h1,.site-brand h1,.overview-value,.node-title h2,.hero-copy h1 { font-family:"VT323","Noto Sans SC",monospace; letter-spacing:.2px; }
 .header h1 { font-size:25px; color:var(--mc-grass); text-shadow:2px 2px 0 #172619; }
 .site-icon { image-rendering:pixelated; }
 .toolbar button,.toolbar a { border:2px solid #3a494c; border-radius:3px; background:var(--mc-stone-2); color:var(--mc-muted); box-shadow:inset 0 2px 0 #ffffff0b,2px 2px 0 #0006; }
@@ -239,7 +226,7 @@
 .overview-grid,.group-bar,.node-card,.details-panel,.info-panel,.chart-card { border:2px solid var(--mc-stone-3); border-radius:5px; background:var(--mc-stone); box-shadow:3px 3px 0 #0009,inset 0 1px 0 #ffffff0b; }
 .overview-card { border-right:2px solid var(--mc-stone-3); }
 .overview-card:last-child { border-right:0; }
-.overview-card .overview-label,.metric-label,.overview-card p,.node-meta,.metric small,.io-grid span,.quota,.latency-panel h3,.latency-row,.details-section,.latency-legend { color:var(--mc-muted); }
+.overview-card .overview-label,.metric-label,.overview-card p,.node-meta,.metric small,.io-grid span,.latency-panel h3,.latency-row,.details-section,.latency-legend { color:var(--mc-muted); }
 .overview-value,.node-title h2,.metric-label b,.io-grid b,.latency-row b,.info-panel h2,.info-items b,.chart-card strong { color:var(--mc-ink); }
 .overview-value { font-size:29px; } .overview-value small { color:#a4b4a8; }
 .overview-card .overview-icon { border:2px solid #4d8053; border-radius:3px; background:#29452f; color:var(--mc-grass); }
@@ -252,8 +239,8 @@
 .group-bar button:not(.active) i { color:#b8c9b3; background:#34433a; }
 .node-card { transition:border-color 160ms ease,transform 160ms ease,box-shadow 160ms ease; } .node-card:hover { border-color:var(--mc-grass); transform:translate(-1px,-2px); box-shadow:4px 5px 0 #000b,inset 0 1px 0 #ffffff12; }
 .node-status-dot { border-radius:2px; background:var(--mc-grass); box-shadow:0 0 0 4px #74b7572e; } .node-status-dot.offline { background:#d84d46; box-shadow:0 0 0 4px #d84d462e; }
-.metric>i,.traffic>i,.quota>i { border-radius:1px; background:#101719; } .metric>i b.blue { background:var(--mc-diamond); } .metric>i b.purple { background:#a879d6; } .metric>i b.orange { background:var(--mc-redstone); } .metric>i b.green,.quota>i b { background:var(--mc-grass); }
-.traffic-grid,.io-grid,.detail-row,.details-title,.details-section,.latency-legend { border-color:#344144; }
+.metric>i,.traffic>i { border-radius:1px; background:#101719; } .metric>i b.blue { background:var(--mc-diamond); } .metric>i b.purple { background:#a879d6; } .metric>i b.orange { background:var(--mc-redstone); } .metric>i b.green { background:var(--mc-grass); }
+.traffic-grid,.io-grid,.details-section,.latency-legend { border-color:#344144; }
 .price { border:2px solid #7a6130; border-radius:3px; background:#4a3c20; color:#f0ca60; }
 .chart-switch { border:2px solid #3a494c; border-radius:3px; background:#151d20; } .chart-switch button { border-radius:2px; color:var(--mc-muted); } .chart-switch button.active { background:var(--mc-moss); color:#f2f7df; box-shadow:inset 0 -2px 0 var(--mc-grass); }
 .chart-card { background:#182125; } .chart-card-title .app-icon { color:var(--mc-diamond); } .chart-card:nth-child(2) .chart-card-title .app-icon { color:#b18ad8; } .chart-card:nth-child(3) .chart-card-title .app-icon { color:var(--mc-redstone); } .chart-card:nth-child(4) .chart-card-title .app-icon { color:var(--mc-grass); }
@@ -275,7 +262,7 @@
 .node-card::before { content:""; position:absolute; top:0; right:0; left:0; height:4px; background:linear-gradient(90deg,var(--mc-grass) 0 28%,var(--mc-moss) 28% 72%,#6b4a32 72%); }
 .node-card::after { content:""; position:absolute; right:0; bottom:0; width:12px; height:12px; background:var(--mc-redstone); clip-path:polygon(100% 0,100% 100%,0 100%); opacity:.8; }
 .node-status-dot { box-shadow:0 0 0 3px #74b7572e, inset 2px 2px 0 #ffffff55; }
-.metric > i b, .quota > i b { box-shadow:inset 0 2px 0 #ffffff40; }
+.metric > i b { box-shadow:inset 0 2px 0 #ffffff40; }
 .price::before { content:"◆"; margin-right:4px; color:#f0ca60; font-size:9px; }
 
 /* 世界场景背景：天空、像素云和地平线草方块，形成 MC 模式的独立空间感。 */
@@ -289,7 +276,7 @@
 .overview-card .overview-icon { box-shadow:inset 2px 2px 0 #b0d77b55,2px 2px 0 #08100a99; }
 .overview-card:nth-child(3) .overview-icon { box-shadow:inset 2px 2px 0 #c6ffff55,2px 2px 0 #08100a99; }
 .overview-card:nth-child(4) .overview-icon { box-shadow:inset 2px 2px 0 #ffb08a55,2px 2px 0 #08100a99; }
-.metric > i,.traffic > i,.quota > i { background:#0c1518; border:1px solid #334348; }
+.metric > i,.traffic > i { background:#0c1518; border:1px solid #334348; }
 .signal-bars > i { box-shadow:inset 0 2px 0 #ffffff38; }
 
 }
@@ -298,7 +285,7 @@
 @scope (.monitor-app.mc-theme) {
   .overview-grid,.group-bar,.node-card,.details-panel,.info-panel,.chart-card { border-color:#7d4d2c; background-color:#f2e2b9; background-image:none; box-shadow:4px 5px 0 #0b100d99,inset 0 0 0 2px #c18a50; }
   .overview-card,.node-card { color:#3d2a1d; }
-  .overview-label,.metric-label,.overview-card p,.node-meta,.metric small,.io-grid span,.quota,.latency-panel h3,.latency-row,.details-section,.latency-legend { color:#6b5138; }
+  .overview-label,.metric-label,.overview-card p,.node-meta,.metric small,.io-grid span,.latency-panel h3,.latency-row,.details-section,.latency-legend { color:#6b5138; }
   .overview-value,.node-title h2,.metric-label b,.io-grid b,.latency-row b,.info-panel h2,.info-items b,.chart-card strong { color:#302218; text-shadow:1px 1px 0 #fff5d055; }
   .group-bar { border-color:#714524; background-color:#5d3924; background-image:linear-gradient(90deg,#ffffff0c 1px,transparent 1px),linear-gradient(#2a170e22 1px,transparent 1px); background-size:13px 100%,100% 7px; box-shadow:4px 5px 0 #0b100d99,inset 0 2px 0 #a96e3d,inset 0 -3px 0 #382014; }
   .group-bar button,.group-bar .group-code { color:#f2e4bd; text-shadow:1px 1px 0 #2c170e; }
@@ -307,8 +294,8 @@
   .node-card::before { height:9px; background:repeating-linear-gradient(90deg,#8cbd51 0 13px,#5f9b3c 13px 21px,#416f32 21px 27px); box-shadow:inset 0 -2px 0 #3b5d2e; }
   .node-head { border-color:#704323; background:linear-gradient(#9a6339,#704326); box-shadow:inset 0 2px 0 #c48a52,inset 0 -2px 0 #4b2b1c; }
   .node-title h2 { color:#fff0cb; text-shadow:1px 1px 0 #382116; }
-  .metric > i,.traffic > i,.quota > i { background:#dfcc98; border-color:#b89b64; }
-  .traffic-grid,.io-grid,.detail-row,.details-title,.details-section,.latency-legend { border-color:#d1bb8b; }
+  .metric > i,.traffic > i { background:#dfcc98; border-color:#b89b64; }
+  .traffic-grid,.io-grid,.details-section,.latency-legend { border-color:#d1bb8b; }
   .chart-switch { border-color:#a98451; background:#ead7a8; }
   .chart-switch button { color:#6f5237; }
   .chart-switch button.active { background:#6e9f45; color:#fff8d9; }

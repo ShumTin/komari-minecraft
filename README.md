@@ -1,44 +1,156 @@
 # Komari Minecraft
 
-从零实现的 Komari 浅色主题监控面板。页面数据通过 Komari RPC API 加载，不内置生产环境 mock 数据。
+一款为 [Komari Monitor](https://github.com/komari-monitor/komari) 制作的监控面板主题，提供浅色、深色和 Minecraft 三种外观。主题使用 Vue 3 与 Vite 构建，所有节点和监控数据均来自 Komari API，不包含生产环境 Mock 数据。
+
+## 主题预览
+
+### 浅色主题
+
+![Komari Minecraft 浅色主题](docs/screenshots/light.png)
+
+### 深色主题
+
+![Komari Minecraft 深色主题](docs/screenshots/dark.png)
+
+### Minecraft 主题
+
+![Komari Minecraft Minecraft 主题](docs/screenshots/mc.png)
+
+## 功能
+
+- 浅色、深色和 Minecraft 外观切换，并在浏览器中保存选择。
+- 在线节点、剩余价值、累计流量和实时速率总览。
+- 按地区筛选节点，展示系统、资源、流量、延迟和丢包信息。
+- 独立节点详情页，提供负载、网络和 Ping 历史图表。
+- 优先使用 WebSocket 和批量状态接口，连接不可用时自动降级到 HTTP。
+- 支持桌面、平板和移动端布局。
+- 支持 Komari 后台生成的主题配置面板。
+
+## 安装
+
+需要 Komari 1.0.5 或更高版本，以支持 managed 主题配置。
+
+### 上传主题包
+
+1. 前往 [Releases](https://github.com/ShumTin/komari-minecraft/releases/latest) 下载最新的 `komari-theme-minecraft-v*.zip`。
+2. 进入 Komari 后台的主题管理页面。
+3. 上传 ZIP 并启用主题。
+
+请使用 Release 中提供的主题包，不要上传 GitHub 自动生成的源码压缩包。
+
+### 从仓库导入
+
+也可以在 Komari 的“导入远程主题”中填写：
+
+```text
+https://github.com/ShumTin/komari-minecraft
+```
+
+## 主题配置
+
+主题启用后，可以在 Komari 后台调整以下选项：
+
+| 分类 | 配置 | 说明 |
+| --- | --- | --- |
+| 服务器卡片 | 启用三网延迟 | 开启后分别显示电信、移动和联通；关闭后显示平均延迟与平均丢包率。 |
+| 服务器卡片 | 三网任务名称 | 留空时自动匹配运营商名称；填写后按完整任务名选择。 |
+| 首页总览 | 显示总览统计条 | 控制整个总览区域。 |
+| 首页总览 | 显示在线 | 控制在线节点统计。 |
+| 首页总览 | 显示资产 | 控制剩余价值统计。 |
+| 首页总览 | 显示累计流量 | 控制累计上传和下载流量统计。 |
+| 首页总览 | 显示实时网速 | 控制实时上传和下载速率统计。 |
+
+指定的 Ping 任务没有数据时显示 `--`。详情页始终展示可用的全部 Ping 任务。
+
+前台每 30 秒、手动刷新以及页面重新可见时读取后台主题设置。读取失败时会显示提示，并保留上一次配置或默认值。
+
+## 外观与数据说明
+
+- 外观选择保存在浏览器的 `komari-appearance` 本地存储项中；未选择时跟随系统外观。
+- 首页与后台的外观同步依赖同源部署，独立开发服务器无法修改另一域名或端口下的后台存储。
+- 剩余价值固定折算为 CNY，参考汇率请求成功后在当前页面缓存 24 小时。
+- 缺少币种、汇率或必要计费信息时，页面会明确提示估值不完整。
+
+## 兼容性
+
+- 主题配置：Komari 1.0.5+
+- 数据接口：`/api/rpc2`
+- 节点详情路由：`/instance/:uuid`
+- 后台入口：`/admin`
+- 现代浏览器：支持 WebSocket、CSS `color-mix()` 和 `@scope`
+
+生产部署需要由 Komari 或 Web 服务器为 `/instance/:uuid` 提供首页回退，直接访问或刷新详情地址时才能正确加载主题。
 
 ## 开发
 
+安装依赖：
+
 ```bash
 npm install
+```
+
+复制环境配置，并填写 Komari 服务端地址：
+
+```bash
+cp .env.example .env.local
+```
+
+```dotenv
+KOMARI_URL=http://127.0.0.1:端口
+```
+
+启动开发服务器：
+
+```bash
 npm run dev
 ```
 
-提交前可运行完整检查：
+`KOMARI_URL` 和 `VITE_KOMARI_URL` 均可用于开发代理。地址末尾不要添加 `/`。未配置代理时，页面仍可启动，但 API 必须由同源服务提供。
+
+## 测试与构建
+
+运行完整检查：
 
 ```bash
 npm run verify
 ```
 
-该命令依次执行测试、生产构建和 Git 空白字符检查。
+该命令依次运行自动化测试、生产构建和 Git 空白字符检查。
 
-独立 Vite 开发服务需要把 API 代理到 Komari 实例。复制 `.env.example` 为 `.env.local`，将地址改成你的 Komari 地址：
+生成可上传到 Komari 的主题包：
 
 ```bash
-KOMARI_URL=http://127.0.0.1:端口 npm run dev
+npm run package:theme
 ```
 
-也可以在 `.env.local` 中配置 `KOMARI_URL` 或 `VITE_KOMARI_URL`。未配置时页面仍可启动，但需要通过同源部署或开发代理连接 Komari 服务。
+打包需要 PowerShell 7（`pwsh`），产物位于：
 
-页面包含节点筛选、刷新指标、导航切换、加载/错误/空状态和响应式布局。
+```text
+release/komari-theme-minecraft-v*.zip
+```
 
-## 后台主题设置与安装
+主题包结构：
 
-运行 `npm run package:theme`，将 `release/komari-theme-minecraft-v1.0.1.zip` 上传到 Komari 后台主题管理并启用。需要支持 managed 配置的 Komari（1.0.5 及以上），配置表单由后台生成。
+```text
+komari-theme-minecraft-v*.zip
+├── komari-theme.json
+└── dist/
+    ├── index.html
+    ├── preview.png
+    └── assets/
+```
 
-也可在“导入远程主题”中填写仓库地址：https://github.com/ShumTin/komari-minecraft 。仓库的最新正式 Release 必须附带上述主题 ZIP，Komari 会从 Release 下载主题包；仅推送源码不能用于这种导入方式。本地打包命令需要 PowerShell 7（`pwsh`）。
+推送到 `master` 或提交 Pull Request 时，GitHub Actions 会自动运行完整检查。创建与 `package.json`、`komari-theme.json` 版本一致的 `v*` 标签后，发布工作流会生成主题包并创建 GitHub Release。
 
-后台主题设置仅包含三网任务名、三网延迟开关以及总览各项开关。三网名称全部留空时自动匹配；填写名称后严格按完整任务名选择，缺失显示 `--`。关闭三网后显示各任务平均延迟和平均丢包率，详情图表仍展示全部任务。
+## 技术栈
 
-用户通过首页工具栏选择浅色、深色或 MC 主题，选择保存在浏览器的 `komari-appearance` 本地存储项中；未选择时跟随系统。背景使用各主题内置样式，不支持自定义背景图片。旧版本后台保存的外观、币种和背景配置不再生效。
+- Vue 3
+- Vite
+- JavaScript
+- uPlot
+- Lucide Icons
+- 原生 CSS
 
-后台明暗跟随首页：浅色和 MC 对应后台浅色，深色对应后台深色。首页加载、切换主题和点击后台入口时会同步后台的 `appearance` 偏好；已经打开的后台标签页刷新后生效。此同步依赖同源部署，独立 Vite 开发页无法写入另一域名或端口的后台存储。
+## 许可证
 
-前台每 30 秒、手动刷新以及切回标签页时读取后台设置。配置读取失败会显示提示并保留上次配置。
-
-资产固定折算为 CNY，通过 ExchangeRate-API 获取参考汇率，成功请求在当前页面缓存 24 小时。剩余价值按剩余时间占计费周期的比例计算（最高为一个周期价格），一次性付费保留原价值；缺少汇率或计费信息时显示不完整估值提示。公开配置中不要存放私密信息。
+本项目基于 [MIT License](LICENSE) 开源。
